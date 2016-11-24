@@ -43,7 +43,7 @@ class DeployCommand extends Command
         $gulp = new Process('./node_modules/.bin/gulp');
         app(Filesystem::class)->cleanDirectory(cache_dir());
         $gulp->run();
-        if (!$gulp->isSuccessful()) {
+        if (! $gulp->isSuccessful()) {
             $output->writeln('<error>Javascript dependencies not installed</error>');
             $output->writeln('Run <info>yarn</info> or <info>npm install</info>');
         }

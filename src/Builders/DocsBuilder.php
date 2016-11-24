@@ -1,15 +1,15 @@
 <?php namespace Znck\Sereno\Builders;
 
-use Znck\Sereno\Contracts\Builder;
-use Znck\Sereno\DataExtractor;
-use Znck\Sereno\ProcessorFactory;
-use Znck\Sereno\Parsers\Markdown;
-use Symfony\Component\Finder\SplFileInfo;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\View\Factory;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\PhpEngine;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\View\Factory;
+use Symfony\Component\Finder\SplFileInfo;
+use Znck\Sereno\Contracts\Builder;
+use Znck\Sereno\DataExtractor;
+use Znck\Sereno\Parsers\Markdown;
+use Znck\Sereno\ProcessorFactory;
 
 class DocsBuilder implements Builder
 {
@@ -74,20 +74,23 @@ class DocsBuilder implements Builder
         $this->baseURL = config('docs.url_prefix');
     }
 
-    public function handledPatterns(): array {
+    public function handledPatterns(): array
+    {
         return [$this->docsDirectory.'/*'];
     }
 
-    public function data(array $files, array $data): array {
+    public function data(array $files, array $data): array
+    {
         return $data;
     }
 
-    public function build(array $files, array $data) {
+    public function build(array $files, array $data)
+    {
         list($index, $docs) = $this->filterFiles($files);
         $options = [
             'view' => [
                 'extends' => config('docs.extends'),
-                'yields' => config('docs.yields'),
+                'yields'  => config('docs.yields'),
             ],
             'interceptor' => [$this, 'getOutputFilename'],
         ];
@@ -100,23 +103,29 @@ class DocsBuilder implements Builder
         $first = array_first($docs);
         $path = config('docs.default', array_first(explode('.', $first->getBasename(), 2)));
         $this->processor->process($this->getRedirectFile(), ['target' => url($this->baseURL).'/'.$path] + $data,
-                ['interceptor' => function () { return $this->baseURL.DIRECTORY_SEPARATOR.'index.html'; }]);
+                ['interceptor' => function () {
+                    return $this->baseURL.DIRECTORY_SEPARATOR.'index.html';
+                }]);
     }
 
-    protected function getRedirectFile() {
+    protected function getRedirectFile()
+    {
         $filename = __DIR__.'/../resources/views/_includes/redirect.blade.php';
 
         return new SplFileInfo($filename, '_includes', '_includes/redirect.blade.php');
     }
 
-    protected function compileWithBlade(string $content, array $data): string {
+    protected function compileWithBlade(string $content, array $data): string
+    {
         $viewCache = cache_dir(sha1($this->indexFilename).'.php');
         $this->filesystem->put($viewCache, $this->getCompiler()->compileString("${content}"));
-        $content = (new PhpEngine)->get($viewCache, $this->getViewData(['docs_url' => rtrim(url($this->baseURL), '/')] + $data));
+        $content = (new PhpEngine())->get($viewCache, $this->getViewData(['docs_url' => rtrim(url($this->baseURL), '/')] + $data));
+
         return Markdown::parse($content);
     }
 
-    public function getOutputFilename(SplFileInfo $file): string {
+    public function getOutputFilename(SplFileInfo $file): string
+    {
         $filename = $file->getFilename();
         $extension = last(explode('.', $filename, 2));
         $basename = preg_replace('/\.'.preg_quote($extension).'$/', '', $filename);
@@ -131,11 +140,13 @@ class DocsBuilder implements Builder
         return $directory.DIRECTORY_SEPARATOR.$basename.DIRECTORY_SEPARATOR.'index.html';
     }
 
-    protected function getOutputUrl(SplFileInfo $file): string {
+    protected function getOutputUrl(SplFileInfo $file): string
+    {
         return str_replace('\\', '/', dirname($this->getOutputFilename($file)));
     }
 
-    protected function filterFiles(array $files): array {
+    protected function filterFiles(array $files): array
+    {
         $index = null;
         $docs = array_filter($files, function (SplFileInfo $file) use (&$index) {
             if (starts_with($file->getBasename(), $this->indexFilename)) {
@@ -156,7 +167,8 @@ class DocsBuilder implements Builder
         return [$index, $docs];
     }
 
-    protected function buildIndex(array $files): string {
+    protected function buildIndex(array $files): string
+    {
         $items = array_map(function (SplFileInfo $file) {
             $url = $this->getOutputUrl($file);
             $title = ucfirst(str_replace('-', ' ', last(explode('/', $url))));

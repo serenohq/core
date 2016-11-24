@@ -41,11 +41,11 @@ class BlogBuilder implements Builder
             foreach ($pages as $index => $posts) {
                 $this->page = $index + 1;
                 $paginator = [
-                    'posts' => $this->preparePosts($posts),
+                    'posts'        => $this->preparePosts($posts),
                     'current_page' => $this->page,
-                    'prev_page' => $this->page < $total_pages ? $this->page + 1 : null,
-                    'next_page' => $this->page > 1 ? $this->page - 1 : null,
-                    'total_pages' => $total_pages,
+                    'prev_page'    => $this->page < $total_pages ? $this->page + 1 : null,
+                    'next_page'    => $this->page > 1 ? $this->page - 1 : null,
+                    'total_pages'  => $total_pages,
                 ];
                 if ($index === 0) {
                     $this->page = null;

@@ -55,7 +55,7 @@ class SiteGenerator
             if (is_null($name)) {
                 $groups[self::DEFAULT_BUILDER][] = $file;
             } else {
-                if (!array_key_exists($name, $groups)) {
+                if (! array_key_exists($name, $groups)) {
                     $groups[$name] = [];
                 }
 
@@ -71,7 +71,7 @@ class SiteGenerator
         $files = array_filter(
             $this->filesystem->allFiles(content_dir()),
             function (SplFileInfo $file) {
-                return !Str::startsWith($file->getRelativePathname(), $this->resourcesDirectory);
+                return ! Str::startsWith($file->getRelativePathname(), $this->resourcesDirectory);
             }
         );
 
@@ -84,7 +84,7 @@ class SiteGenerator
 
         foreach ($groups as $name => $files) {
             foreach ($this->builders[$name] as $builder) {
-                /** @var Builder $builder */
+                /* @var Builder $builder */
                 $data = $builder->data($files, $data);
             }
         }
@@ -114,8 +114,6 @@ class SiteGenerator
                 return $pattern;
             }
         }
-
-        return null;
     }
 
     public function getResourcesDirectory(): string
@@ -130,7 +128,7 @@ class SiteGenerator
 
     protected function prepareOutputDirectory()
     {
-        if (!$this->filesystem->exists(public_dir())) {
+        if (! $this->filesystem->exists(public_dir())) {
             $this->filesystem->makeDirectory(public_dir(), 0755, true);
         }
 

@@ -9,15 +9,18 @@ class EmojiParser extends AbstractInlineParser
 {
     protected $emoji;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->emoji = new CompiledIndex();
     }
 
-    public function getCharacters() {
+    public function getCharacters()
+    {
         return [':'];
     }
 
-    public function parse(InlineParserContext $inlineContext) {
+    public function parse(InlineParserContext $inlineContext)
+    {
         $cursor = $inlineContext->getCursor();
         $previous = $cursor->peek(-1);
         if ($previous !== null && $previous !== ' ') {
@@ -26,13 +29,13 @@ class EmojiParser extends AbstractInlineParser
         $saved = $cursor->saveState();
         $cursor->advance();
         $handle = $cursor->match('/^[a-z0-9\+\-_]+:/');
-        if (!$handle) {
+        if (! $handle) {
             $cursor->restoreState($saved);
 
             return false;
         }
         $next = $cursor->peek(0);
-        if ($next !== null && !preg_match('/[^a-z0-9]/', $next)) {
+        if ($next !== null && ! preg_match('/[^a-z0-9]/', $next)) {
             $cursor->restoreState($saved);
 
             return false;
@@ -43,7 +46,7 @@ class EmojiParser extends AbstractInlineParser
 
             return false;
         }
-        $src =  $src['unicode'];
+        $src = $src['unicode'];
         $inline = new Image("//twemoji.maxcdn.com/2/72x72/${src}.png", $key);
         $inline->data['attributes'] = ['class' => 'emoji', 'alt' => ":${key}:"];
         $inlineContext->getContainer()->appendChild($inline);

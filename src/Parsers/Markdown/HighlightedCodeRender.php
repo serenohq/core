@@ -22,7 +22,7 @@ class HighlightedCodeRender implements BlockRendererInterface
      */
     public function render(AbstractBlock $block, ElementRendererInterface $htmlRenderer, $inTightList = false)
     {
-        if (!($block instanceof FencedCode or $block instanceof IndentedCode)) {
+        if (! ($block instanceof FencedCode or $block instanceof IndentedCode)) {
             throw new InvalidArgumentException('Incompatible block type: '.get_class($block));
         }
 
@@ -38,7 +38,7 @@ class HighlightedCodeRender implements BlockRendererInterface
             $attrs['class'] .= 'language-'.$htmlRenderer->escape($infoWords[0], true);
             $code = $highlighter->highlight($this->normalizeLang($infoWords[0]), $block->getStringContent());
         } else {
-            $code = (object)[
+            $code = (object) [
                 'value' => $htmlRenderer->escape($block->getStringContent()),
             ];
         }

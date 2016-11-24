@@ -3,7 +3,7 @@
 return [
     'view' => [
         'extends' => '_includes.markdown',
-        'yields' => 'markdown-body',
+        'yields'  => 'markdown-body',
     ],
 
     'blog' => [
@@ -13,19 +13,19 @@ return [
 
         'post' => [
             'extends' => '_includes.blog.post',
-            'yields' => 'post-content',
+            'yields'  => 'post-content',
         ],
     ],
 
     'docs' => [
-        'directory' => '_docs',
+        'directory'  => '_docs',
         'url_prefix' => 'docs',
-        'index' => 'documentation',
+        'index'      => 'documentation',
         // Default Page
         // 'default' => 'installalation',
         // Markdown Properties.
         'extends' => '_includes.docs.base',
-        'yields' => 'doc_content',
+        'yields'  => 'doc_content',
     ],
 
     'github' => [
@@ -60,7 +60,7 @@ return [
         ],
     ],
 
-    'base_url' => '/',
-    'siteName' => 'Sereno',
+    'base_url'        => '/',
+    'siteName'        => 'Sereno',
     'siteDescription' => 'Just another website created with Sereno',
 ];
