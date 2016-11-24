@@ -1,6 +1,4 @@
-<div style="text-align: center">
-  <img src="logo.svg" alt="Sereno">
-</div>
+![](logo.png)
 
 <p align="center">
   <a href="https://styleci.io/repos/74711201">
