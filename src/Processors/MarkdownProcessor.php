@@ -50,7 +50,7 @@ class MarkdownProcessor extends AbstractProcessor
         $this->frontParser->parse($file->getContents());
         $markdown = $this->frontParser->getMainContent();
         $viewData = $this->frontParser->getFrontContent();
-        $viewContent = Markdown::parse((string)$markdown);
+        $viewContent = Markdown::parse((string) $markdown);
         $viewCache = $this->getCacheFile($file);
 
         $view = $this->buildView($viewContent, $viewData + $data, $options);
@@ -103,7 +103,7 @@ class MarkdownProcessor extends AbstractProcessor
 
     protected function isExpired(string $cache, SplFileInfo $file): bool
     {
-        if (!$this->filesystem->exists($cache)) {
+        if (! $this->filesystem->exists($cache)) {
             return true;
         }
 

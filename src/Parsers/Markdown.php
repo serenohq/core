@@ -6,8 +6,8 @@ use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extras\SmartPunct\SmartPunctExtension;
 use League\CommonMark\Extras\TwitterHandleAutolink\TwitterHandleAutolinkExtension;
-use Webuni\CommonMark\TableExtension\TableExtension;
 use Webuni\CommonMark\AttributesExtension\AttributesExtension;
+use Webuni\CommonMark\TableExtension\TableExtension;
 use Znck\Sereno\Parsers\Markdown\EmojiParser;
 use Znck\Sereno\Parsers\Markdown\HighlightedCodeRender;
 
@@ -43,7 +43,7 @@ class Markdown
      */
     protected static function converter(): CommonMarkConverter
     {
-        if (!self::$converter) {
+        if (! self::$converter) {
             $environment = Environment::createCommonMarkEnvironment();
 
             $environment->addExtension(new SmartPunctExtension());

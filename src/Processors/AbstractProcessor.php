@@ -87,8 +87,6 @@ abstract class AbstractProcessor implements Processor
                 return $extension;
             }
         }
-
-        return null;
     }
 
     protected function getUrl(string $filename): string
@@ -120,7 +118,7 @@ abstract class AbstractProcessor implements Processor
     {
         $directory = dirname($filename);
 
-        if (!$this->filesystem->isDirectory($directory)) {
+        if (! $this->filesystem->isDirectory($directory)) {
             $this->filesystem->makeDirectory($directory, 0755, true);
         }
     }

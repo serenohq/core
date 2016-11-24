@@ -52,10 +52,10 @@ class CollectionBuilder implements Builder
 
     protected function addToCollection(string $collection, $post)
     {
-        if (!array_key_exists($collection, $this->collections)) {
+        if (! array_key_exists($collection, $this->collections)) {
             $this->collections[$collection] = [
-                'name' => $this->deSlugify($collection),
-                'path' => $collection,
+                'name'  => $this->deSlugify($collection),
+                'path'  => $collection,
                 'posts' => [],
             ];
         }
@@ -73,8 +73,6 @@ class CollectionBuilder implements Builder
         if ($this->isCollection($post)) {
             return $this->collections[$this->getCollectionSlug($post)];
         }
-
-        return null;
     }
 
     protected function normalizePathname(string $pathname): string

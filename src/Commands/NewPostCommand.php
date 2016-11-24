@@ -49,7 +49,7 @@ class NewPostCommand extends Command
 
             $collection = str_slug($helper->ask($input, $output, $question));
 
-            if (!$filesystem->isDirectory(content_dir('_blog'.DIRECTORY_SEPARATOR.$collection))) {
+            if (! $filesystem->isDirectory(content_dir('_blog'.DIRECTORY_SEPARATOR.$collection))) {
                 $filesystem->makeDirectory(content_dir('_blog'.DIRECTORY_SEPARATOR.$collection), 0755, true);
             }
 

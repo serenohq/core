@@ -30,7 +30,5 @@ class DataExtractor
                 return $this->extractors[$extension]->get($file);
             }
         }
-
-        return null;
     }
 }

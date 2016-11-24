@@ -47,7 +47,7 @@ class BlogPostBuilder implements Builder
         $options = [
             'view' => [
                 'extends' => config('blog.post.extends'),
-                'yields' => config('blog.post.yields'),
+                'yields'  => config('blog.post.yields'),
             ],
             'interceptor' => [$this, 'getOutputFilename'],
         ];
@@ -90,7 +90,7 @@ class BlogPostBuilder implements Builder
             if ($data = $this->extractor->get($file)) {
                 $this->posts[$file->getRelativePathname()] = $this->processData($data);
                 $this->posts[$file->getRelativePathname()] += [
-                    'path' => $this->getPostUrl($file),
+                    'path'     => $this->getPostUrl($file),
                     'pathname' => $file->getRelativePathname(),
                 ];
             }
