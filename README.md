@@ -30,7 +30,7 @@
 
 > **Note:** This repository contains the core code of Sereno.
 > If you want to build an website using Sereno, visit the main
-> [Sereno repository](https://github.com/znck/sereno)
+> [Sereno repository](https://github.com/znck/sereno).
 
 Sereno is a simple and powerful blog creation tool that allows
 you to share your stories with the world. With power of Laravel's
