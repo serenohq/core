@@ -2,6 +2,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Composer template
 composer.phar
+/sereno
 /vendor
 /content
 /_cache
