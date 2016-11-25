@@ -1,4 +1,4 @@
-![](logo.png)
+![](sereno.png)
 
 <p align="center">
   <a href="https://styleci.io/repos/74711201">
