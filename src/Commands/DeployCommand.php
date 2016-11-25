@@ -27,13 +27,13 @@ class DeployCommand extends Command
         $output->writeln('=> '.$save->getCommandLine());
         $save->run();
         $output->write($save->getOutput());
-        if (!$save->isSuccessful()) {
+        if (! $save->isSuccessful()) {
             $this->dd($output, $save);
         }
 
         $upload->run();
         $output->write($upload->getOutput());
-        if (!$upload->isSuccessful()) {
+        if (! $upload->isSuccessful()) {
             $this->dd($output, $upload);
         }
 
@@ -47,7 +47,8 @@ class DeployCommand extends Command
         }
     }
 
-    protected function dd(OutputInterface $output, Process $process) {
+    protected function dd(OutputInterface $output, Process $process)
+    {
         $output->writeln('<error>There was some error.</error>'.PHP_EOL.$process->getErrorOutput());
         exit($process->getExitCode());
     }
