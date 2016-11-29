@@ -191,6 +191,9 @@ class Application extends Container
 
     protected function registerExtensions() {
         $this->line('Boot extensions.');
+        $extensions = (array) config('sereno.extensions');
+        $this->config()->set('sereno.extensions', array_unique($extensions));
+
         foreach (config('sereno.extensions') as $name) {
             $extension = $this->make($name);
 

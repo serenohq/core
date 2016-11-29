@@ -64,8 +64,6 @@ class BlogBuilder implements Builder
 
         $file = $this->getView('blog.index');
 
-        app()->line($file->getRealPath());
-
         foreach ($pages as $index => $posts) {
             $this->page = $index + 1;
             $paginator = [
