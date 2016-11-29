@@ -23,7 +23,8 @@ class DeployCommand extends Command
         $this->directory = $directory = 'deploy-'.time();
         $repository = config('github.repository') ?? $this->getRepository();
         $branch = config('github.branch') ?? $this->getBranch();
-        $author = config('github.author') ?? 'Rahul Kadyan <hi@znck.me>';
+        $name = config('github.user.name') ?? 'Sereno Deployer';
+        $email = config('github.user.email') ?? 'hi@znck.me';
 
         $this->build($output);
 
@@ -31,7 +32,7 @@ class DeployCommand extends Command
 
         $commands = [
             "git add -A" => null,
-            "git commit -m ':rocket: Sereno Auto Deploy' --author='${author}'" => null,
+            "git -c user.name='${name}' -c user.email='${email}' commit -m ':rocket: Sereno Auto Deploy'" => null,
             "git push origin ${branch}" => "Uploading...",
         ];
 
