@@ -10,14 +10,14 @@ class CollectionBuilder implements Builder
     protected $collections = [];
 
     /**
-     * Blog directory
+     * Blog directory.
      *
      * @var string
      */
     protected $blogDirectory;
 
     /**
-     * Blog URL prefix
+     * Blog URL prefix.
      *
      * @var string
      */

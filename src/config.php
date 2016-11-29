@@ -9,8 +9,8 @@ return [
     'blog' => [
         'enable_comments' => false,
 
-        'directory' => 'content/_blog',
-        'url_prefix' => 'blog',
+        'directory'    => 'content/_blog',
+        'url_prefix'   => 'blog',
         'postsPerPage' => 15,
 
         'post' => [
