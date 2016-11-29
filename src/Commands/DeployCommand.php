@@ -23,7 +23,7 @@ class DeployCommand extends Command
         $this->directory = $directory = 'deploy-'.time();
         $repository = config('github.repository') ?? $this->getRepository();
         $branch = config('github.branch') ?? $this->getBranch();
-        $author = config('github.author', 'Rahul Kadyan <hi@znck.me>');
+        $author = config('github.author') ?? 'Rahul Kadyan <hi@znck.me>';
 
         $this->build($output);
 
