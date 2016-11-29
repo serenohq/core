@@ -30,7 +30,8 @@ class DefaultExtension extends AbstractExtension
         ];
     }
 
-    public function getViewsDirectory(): array {
+    public function getViewsDirectory(): array
+    {
         return [__DIR__.'/../resources/views/blog/index.blade.php'];
     }
 }
