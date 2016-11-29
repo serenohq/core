@@ -50,8 +50,7 @@ class DeployCommand extends Command
             }
         }
 
-        $filesystem->deleteDirectory($directory);
-
+        $this->cleanup();
         $output->writeln('<info>Site was generated successfully.</info>');
     }
 
@@ -92,11 +91,15 @@ class DeployCommand extends Command
     protected function dd(OutputInterface $output, Process $process)
     {
         $output->writeln('<error>There was some error.</error>'.PHP_EOL.$process->getErrorOutput());
+        $this->cleanup();
+        exit($process->getExitCode());
+    }
+
+    protected function cleanup() {
         $filesystem = app(Filesystem::class);
         if ($filesystem->exists(root_dir($this->directory))) {
             $filesystem->deleteDirectory(root_dir($this->directory));
         }
-        exit($process->getExitCode());
     }
 
     protected function build(OutputInterface $output)
