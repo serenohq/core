@@ -46,7 +46,7 @@ class Blade
             return $path;
         }
 
-        $root = config('base_url', '');
+        $root = config('sereno.url', '');
 
         return trim($root, '/').'/'.trim($path, '/');
     }

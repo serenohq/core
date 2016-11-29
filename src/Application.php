@@ -22,10 +22,11 @@ use Znck\Sereno\Commands\BuildCommand;
 use Znck\Sereno\Commands\DeployCommand;
 use Znck\Sereno\Commands\NewPostCommand;
 use Znck\Sereno\Contracts\Builder;
+use Znck\Sereno\Contracts\Extension;
 
 class Application extends Container
 {
-    const VERSION = '0.0.0';
+    const VERSION = '0.2.0';
 
     /**
      * @var \Symfony\Component\Console\Application
@@ -145,12 +146,26 @@ class Application extends Container
 
     protected function bootApplication()
     {
+        $this->configureContentsDirectory();
+        $this->registerExtensions();
         $this->registerServices();
         $this->registerProcessors();
         $this->registerExtractors();
         $this->registerBuilders();
 
         $this->line('<info>Ready.</info>'.PHP_EOL);
+    }
+
+    protected function configureContentsDirectory($directories = []) {
+        $default = config('sereno.directory', []);
+
+        if (count($default) < 1) {
+            $default = ['content'];
+        }
+
+        $others = array_merge($directories, [config('blog.directory'), config('docs.directory')]);
+
+        $this->config()->set('sereno.directory', array_merge($default, $others));
     }
 
     public function rootDirectory(string $path = null) : string
@@ -174,6 +189,19 @@ class Application extends Container
         return $this->make(Repository::class);
     }
 
+    protected function registerExtensions() {
+        $this->line('Boot extensions.');
+        foreach (config('sereno.extensions') as $name) {
+            $extension = $this->make($name);
+
+            $this->instance($name, $extension);
+
+            if (method_exists($extension, 'boot')) {
+                $extension->boot();
+            }
+        }
+    }
+
     protected function registerServices()
     {
         $this->line('Boot services.');
@@ -192,10 +220,15 @@ class Application extends Container
 
             $factory = new ProcessorFactory();
 
-            $factory->registerDefaultProcessor($this->make(config('sereno.default_processor')));
+            foreach (config('sereno.extensions') as $name) {
+                $extension = $this->make($name);
 
-            foreach (config('sereno.processors') as $processor) {
-                $factory->register($this->make($processor));
+                if ($extension instanceof Extension) {
+                    foreach ($extension->getProcessors() as $processor) {
+                        $processor = is_string($processor) ? $this->make($processor) : $processor;
+                        $factory->register($processor);
+                    }
+                }
             }
 
             return $factory;
@@ -209,8 +242,15 @@ class Application extends Container
             $this->line('Create data extractor');
 
             $factory = new DataExtractor();
-            foreach (config('sereno.extractors') as $extractor) {
-                $factory->register($this->make($extractor));
+            foreach (config('sereno.extensions') as $name) {
+                $extension = $this->make($name);
+
+                if ($extension instanceof Extension) {
+                    foreach ($extension->getExtractors() as $extractor) {
+                        $extractor = is_string($extractor) ? $this->make($extractor) : $extractor;
+                        $factory->register($extractor);
+                    }
+                }
             }
 
             return $factory;
@@ -224,15 +264,16 @@ class Application extends Container
             $this->line('Create site generator');
 
             $generator = new SiteGenerator($this, $this->make(Filesystem::class), $this->make(Factory::class));
-            $builders = array_merge([PageBuilder::class], config('sereno.builders'));
 
-            foreach ($builders as $class) {
-                $builder = $this->make($class);
+            foreach (config('sereno.extensions') as $name) {
+                $extension = $this->make($name);
 
-                if ($builder instanceof Builder) {
-                    $generator->register($builder);
-                } else {
-                    throw new InvalidArgumentException("${class} should be instance of ".Builder::class);
+                if ($extension instanceof Extension) {
+                    foreach ($extension->getBuilders() as $builder) {
+                        $builder = is_string($builder) ? $this->make($builder) : $builder;
+
+                        $generator->register($builder);
+                    }
                 }
             }
 
@@ -261,8 +302,22 @@ class Application extends Container
             error_reporting(error_reporting() & ~E_NOTICE & ~E_WARNING);
         });
 
+
+        $directories = (array) config('sereno.views', []);
+        foreach (array_reverse(config('sereno.extensions')) as $name) {
+            $extension = $this->make($name);
+
+            if ($extension instanceof Extension) {
+                $directories = array_merge($directories, $extension->getViewsDirectory());
+            }
+        }
+
+        array_push($directories, __DIR__.'/../resources/views');
+
+        $directories = array_unique($directories);
+
         $filesystem = $this->make(Filesystem::class);
-        $finder = new FileViewFinder($filesystem, [content_dir(), __DIR__.'/../resources/views']);
+        $finder = new FileViewFinder($filesystem, $directories);
 
         return new Factory($resolver, $finder, $dispatcher);
     }

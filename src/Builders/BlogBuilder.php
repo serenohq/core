@@ -1,14 +1,35 @@
-<?php
-
-namespace Znck\Sereno\Builders;
+<?php namespace Znck\Sereno\Builders;
 
 use Symfony\Component\Finder\SplFileInfo;
 use Znck\Sereno\Contracts\Builder;
 use Znck\Sereno\ProcessorFactory;
+use Znck\Sereno\Traits\ViewFinderTrait;
 
 class BlogBuilder implements Builder
 {
+    use ViewFinderTrait;
+
+    /**
+     * Blog directory
+     *
+     * @var string
+     */
+    protected $blogDirectory;
+
+    /**
+     * Blog URL prefix
+     *
+     * @var string
+     */
+    protected $blogUrl;
+
+    /**
+     * Current page number
+     *
+     * @var int
+     */
     protected $page;
+
     /**
      * @var \Znck\Sereno\ProcessorFactory
      */
@@ -17,11 +38,14 @@ class BlogBuilder implements Builder
     public function __construct(ProcessorFactory $processor)
     {
         $this->processor = $processor;
+
+        $this->blogDirectory = config('blog.directory');
+        $this->blogUrl = config('blog.url_prefix');
     }
 
     public function handledPatterns(): array
     {
-        return ['/^blog\..*/'];
+        return [$this->blogDirectory.'/*'];
     }
 
     public function data(array $files, array $data) : array
@@ -31,42 +55,44 @@ class BlogBuilder implements Builder
 
     public function build(array $files, array $data)
     {
-        $pages = array_chunk($data['blog_posts'] ?? [], config('blog.postsPerPage', 10));
+        $pages = array_chunk(array_get($data, 'blog.posts', []), config('blog.postsPerPage', 10));
         $total_pages = count($pages);
 
         $options = [
             'interceptor' => [$this, 'getOutputFilename'],
         ];
-        foreach ($files as $file) {
-            foreach ($pages as $index => $posts) {
-                $this->page = $index + 1;
-                $paginator = [
-                    'posts'        => $this->preparePosts($posts),
-                    'current_page' => $this->page,
-                    'prev_page'    => $this->page < $total_pages ? $this->page + 1 : null,
-                    'next_page'    => $this->page > 1 ? $this->page - 1 : null,
-                    'total_pages'  => $total_pages,
-                ];
-                if ($index === 0) {
-                    $this->page = null;
-                    $this->processor->process($file, $paginator + $data, $options);
-                    $this->page = 1;
-                }
 
+        $file = $this->getView('blog.index');
+
+        app()->line($file->getRealPath());
+
+        foreach ($pages as $index => $posts) {
+            $this->page = $index + 1;
+            $paginator = [
+                'posts'        => $this->preparePosts($posts),
+                'current_page' => $this->page,
+                'prev_page'    => $this->page < $total_pages ? $this->page + 1 : null,
+                'next_page'    => $this->page > 1 ? $this->page - 1 : null,
+                'total_pages'  => $total_pages,
+            ];
+
+            if ($index === 0) {
+                $this->page = null;
                 $this->processor->process($file, $paginator + $data, $options);
+                $this->page = 1;
             }
+
+            $this->processor->process($file, $paginator + $data, $options);
         }
     }
 
     public function getOutputFilename(SplFileInfo $file)
     {
-        $blog = array_first(explode('.', $file->getRelativePathname())) ?? 'blog';
-
         if (is_null($this->page)) {
-            return $blog.DIRECTORY_SEPARATOR.'index.html';
+            return trim($this->blogUrl.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
         }
 
-        return $blog.DIRECTORY_SEPARATOR.$this->page.DIRECTORY_SEPARATOR.'index.html';
+        return trim($this->blogUrl.DIRECTORY_SEPARATOR.$this->page.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
     }
 
     protected function preparePosts(array $posts)

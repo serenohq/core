@@ -15,7 +15,6 @@ class SiteGenerator
     protected $filesystem;
     protected $viewFactory;
     protected $builders = [];
-    protected $resourcesDirectory = '_includes';
 
     public function __construct(Application $app, Filesystem $filesystem, Factory $viewFactory)
     {
@@ -26,6 +25,7 @@ class SiteGenerator
 
     public function register(Builder $builder)
     {
+        $this->app->line('Builder: '.get_class($builder));
         foreach ($builder->handledPatterns() as $pattern) {
             if (array_key_exists($pattern, $this->builders)) {
                 $this->builders[$pattern][] = $builder;
@@ -68,10 +68,34 @@ class SiteGenerator
 
     protected function getAllFiles() : array
     {
+        $files = [];
+        $dirs = config('sereno.directory');
+
+        foreach ($dirs as $dir) {
+            $path = root_dir($dir);
+
+            $files = array_merge($files, $this->filesystem->allFiles($path));
+        }
+
+        $keys = [];
+        $ignored = (array) config('sereno.ignore');
+
         $files = array_filter(
-            $this->filesystem->allFiles(content_dir()),
-            function (SplFileInfo $file) {
-                return ! Str::startsWith($file->getRelativePathname(), $this->resourcesDirectory);
+            $files,
+            function (SplFileInfo $file) use (&$keys, $ignored) {
+                foreach ($ignored as $prefix) {
+                    if (starts_with($file->getRealPath(), root_dir($prefix))) {
+                        return false;
+                    }
+                }
+
+                if (!array_key_exists($file->getRealPath(), $keys)) {
+                    $keys[$file->getRealPath()] = true;
+
+                    return true;
+                }
+
+                return false;
             }
         );
 
@@ -106,11 +130,12 @@ class SiteGenerator
     protected function findBuilder(SplFileInfo $file)
     {
         foreach ($this->builders as $pattern => $builder) {
-            if (starts_with($pattern, '/') and preg_match($pattern, $file->getRelativePathname())) {
+            $path = trim(str_replace(root_dir(), '', $file->getRealPath()), DIRECTORY_SEPARATOR);
+            if (starts_with($pattern, '/') and preg_match($pattern, $path)) {
                 return $pattern;
             }
 
-            if (str_is($pattern, $file->getRelativePathname()) or str_is($pattern, $file->getRelativePath())) {
+            if (str_is($pattern, $path) or str_is($pattern, $path)) {
                 return $pattern;
             }
         }

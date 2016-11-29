@@ -1,6 +1,4 @@
-<?php
-
-namespace Znck\Sereno\Builders;
+<?php namespace Znck\Sereno\Builders;
 
 use Symfony\Component\Finder\SplFileInfo;
 use Znck\Sereno\Contracts\Builder;
@@ -9,22 +7,47 @@ use Znck\Sereno\ProcessorFactory;
 
 class BlogPostBuilder implements Builder
 {
+    /**
+     * List of posts.
+     *
+     * @var array
+     */
     protected $posts = [];
 
-    protected $blogDirectory = '_blog';
     /**
+     * Blog directory
+     *
+     * @var string
+     */
+    protected $blogDirectory;
+
+    /**
+     * Blog URL prefix
+     *
+     * @var string
+     */
+    protected $blogUrl;
+
+    /**
+     * Extracts front data.
+     *
      * @var \Znck\Sereno\DataExtractor
      */
     protected $extractor;
+
     /**
+     * Converts to HTML page.
+     *
      * @var \Znck\Sereno\ProcessorFactory
      */
-    private $factory;
+    protected $factory;
 
     public function __construct(DataExtractor $extractor, ProcessorFactory $factory)
     {
         $this->extractor = $extractor;
         $this->factory = $factory;
+        $this->blogDirectory = config('blog.directory');
+        $this->blogUrl = config('blog.url_prefix');
     }
 
     public function handledPatterns(): array
@@ -36,7 +59,7 @@ class BlogPostBuilder implements Builder
     {
         $posts = $this->findPosts(array_reverse($files));
 
-        return ['blog_posts' => array_values($posts)] + $data;
+        return array_set($data, 'blog', ['posts' => array_values($posts)]);
     }
 
     public function build(array $files, array $data)
@@ -62,9 +85,8 @@ class BlogPostBuilder implements Builder
     public function getOutputFilename(SplFileInfo $file)
     {
         $data = $this->posts[$file->getRelativePathname()];
-        $extension = array_get($data, '__extension', '.md');
         $filename = $file->getFilename();
-        $basename = preg_replace('/'.preg_quote($extension).'$/', '', $filename);
+        $basename = array_first(explode('.', $filename, 2));
         $directory = preg_replace('#^'.preg_quote($this->blogDirectory, '#').'#', '', $file->getRelativePath());
         $directory = trim($directory, DIRECTORY_SEPARATOR);
 
@@ -73,10 +95,10 @@ class BlogPostBuilder implements Builder
         }
 
         if (hash_equals('', $directory)) {
-            return 'blog'.DIRECTORY_SEPARATOR.$basename.DIRECTORY_SEPARATOR.'index.html';
+            return trim($this->blogUrl.DIRECTORY_SEPARATOR.$basename.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
         }
 
-        return 'blog'.DIRECTORY_SEPARATOR.$directory.DIRECTORY_SEPARATOR.$basename.DIRECTORY_SEPARATOR.'index.html';
+        return trim($this->blogUrl.DIRECTORY_SEPARATOR.$directory.DIRECTORY_SEPARATOR.$basename.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -92,6 +114,7 @@ class BlogPostBuilder implements Builder
                 $this->posts[$file->getRelativePathname()] += [
                     'path'     => $this->getPostUrl($file),
                     'pathname' => $file->getRelativePathname(),
+                    'title' => ucfirst(str_replace('-', ' ', array_first(explode('.', $file->getFilename(), 2)))),
                 ];
             }
         }
@@ -147,6 +170,6 @@ class BlogPostBuilder implements Builder
 
     protected function restorePostsFromData(array $data)
     {
-        $this->posts = array_combine(array_keys($this->posts), $data['blog_posts']);
+        $this->posts = array_combine(array_keys($this->posts), array_get($data, 'blog.posts'));
     }
 }

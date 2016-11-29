@@ -2,29 +2,31 @@
 
 return [
     'view' => [
-        'extends' => '_includes.markdown',
+        'extends' => 'markdown',
         'yields'  => 'markdown-body',
     ],
 
     'blog' => [
         'enable_comments' => false,
 
+        'directory' => 'content/_blog',
+        'url_prefix' => 'blog',
         'postsPerPage' => 15,
 
         'post' => [
-            'extends' => '_includes.blog.post',
+            'extends' => 'blog.post',
             'yields'  => 'post-content',
         ],
     ],
 
     'docs' => [
-        'directory'  => '_docs',
+        'directory'  => 'content/_docs',
         'url_prefix' => 'docs',
         'index'      => 'documentation',
         // Default Page
         // 'default' => 'installalation',
         // Markdown Properties.
-        'extends' => '_includes.docs.base',
+        'extends' => 'docs.base',
         'yields'  => 'doc_content',
     ],
 
@@ -33,34 +35,28 @@ return [
     ],
 
     'sereno' => [
-        'builders' => [
-            \Znck\Sereno\Builders\BlogPostBuilder::class,
-            \Znck\Sereno\Builders\CollectionBuilder::class,
-            \Znck\Sereno\Builders\BlogBuilder::class,
-            \Znck\Sereno\Builders\DocsBuilder::class,
-        ],
-
-        'default_processor' => \Znck\Sereno\Processors\FileProcessor::class,
-
-        'processors' => [
-            \Znck\Sereno\Processors\BladeProcessor::class,
-            \Znck\Sereno\Processors\MarkdownProcessor::class,
-        ],
-
-        'extractors' => [
-            \Znck\Sereno\Extractors\BladeExtractor::class,
-            \Znck\Sereno\Extractors\MarkdownYamlExtractor::class,
-        ],
-
         'commands' => [],
+
+        'extensions' => [
+            Znck\Sereno\DefaultExtension::class,
+        ],
+
+        'directory' => [
+            'content',
+        ],
+
+        'views' => [],
 
         'special_files' => [
             '404',
             '.htaccess',
         ],
+
+        'ignore' => [],
+
+        'url'        => '/',
     ],
 
-    'base_url'        => '/',
     'siteName'        => 'Sereno',
     'siteDescription' => 'Just another website created with Sereno',
 ];

@@ -3,21 +3,47 @@
 namespace Znck\Sereno\Builders;
 
 use Znck\Sereno\Contracts\Builder;
+use Znck\Sereno\ProcessorFactory;
 
 class CollectionBuilder implements Builder
 {
     protected $collections = [];
 
-    protected $blogDirectory = '_blog';
+    /**
+     * Blog directory
+     *
+     * @var string
+     */
+    protected $blogDirectory;
+
+    /**
+     * Blog URL prefix
+     *
+     * @var string
+     */
+    protected $blogUrl;
+
+    /**
+     * @var \Znck\Sereno\ProcessorFactory
+     */
+    protected $processor;
+
+    public function __construct(ProcessorFactory $processor)
+    {
+        $this->processor = $processor;
+
+        $this->blogDirectory = config('blog.directory');
+        $this->blogUrl = config('blog.url_prefix');
+    }
 
     public function handledPatterns(): array
     {
-        return [$this->blogDirectory.'/*', '/^collection\..*/'];
+        return [$this->blogDirectory.'/*'];
     }
 
     public function data(array $files, array $data) : array
     {
-        $posts = $data['blog_posts'];
+        $posts = (array) array_get($data, 'post.blogs');
 
         foreach ($posts as $post) {
             if ($this->isCollection($post)) {
@@ -27,11 +53,11 @@ class CollectionBuilder implements Builder
             }
         }
 
-        foreach ($data['blog_posts'] as $index => $post) {
-            $data['blog_posts'][$index]['collection'] = $this->getCollectionOf($post);
+        foreach ((array) array_get($data, 'post.blogs') as $index => &$post) {
+            $post['collection'] = $this->getCollectionOf($post);
         }
 
-        $data['blog_collections'] = $this->collections;
+        array_set($data, 'blog.collections', $this->collections);
 
         return $data;
     }

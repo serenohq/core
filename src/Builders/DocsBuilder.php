@@ -110,9 +110,9 @@ class DocsBuilder implements Builder
 
     protected function getRedirectFile()
     {
-        $filename = __DIR__.'/../resources/views/_includes/redirect.blade.php';
+        $filename = __DIR__.'/../resources/views/redirect.blade.php';
 
-        return new SplFileInfo($filename, '_includes', '_includes/redirect.blade.php');
+        return new SplFileInfo($filename, '', 'redirect.blade.php');
     }
 
     protected function compileWithBlade(string $content, array $data): string

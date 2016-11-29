@@ -24,7 +24,11 @@ class ProcessorFactory
         $extensions = $processor->getHandledExtensions();
 
         foreach ($extensions as $extension) {
-            $this->processors[$extension] = $processor;
+            if (hash_equals('*', $extension)) {
+                $this->defaultProcessor = $processor;
+            } else {
+                $this->processors[$extension] = $processor;
+            }
         }
 
         $this->addExtensions($extensions);
