@@ -10,6 +10,8 @@ use Symfony\Component\Process\Process;
 
 class DeployCommand extends Command
 {
+    protected $directory;
+
     public function configure()
     {
         $this->setName('deploy')
@@ -18,38 +20,81 @@ class DeployCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->directory = $directory = 'deploy-'.time();
+        $repository = config('github.repository') ?? $this->getRepository();
+        $branch = config('github.branch') ?? $this->getBranch();
+        $author = config('github.author', 'Rahul Kadyan <hi@znck.me>');
+
         $this->build($output);
 
-        $save = new Process("git add -A; git commit -m ':rocket: Sereno Auto Deploy'");
-        $upload = new Process('git push -u origin');
-        $publish = new Process('git subtree push --prefix public origin '.config('github.branch'));
+        $this->prepareRepository($directory, $repository, $branch);
 
-        $output->writeln('=> '.$save->getCommandLine());
-        $save->run();
-        $output->write($save->getOutput());
-        if (! $save->isSuccessful()) {
-            $this->dd($output, $save);
+        $commands = [
+            "git add -A" => null,
+            "git commit -m ':rocket: Sereno Auto Deploy' --author='${author}'" => null,
+            "git push origin ${branch}" => "Uploading...",
+        ];
+
+        foreach ($commands as $command => $name) {
+            $process = new Process($command);
+            $process->setWorkingDirectory(root_dir($directory));
+            if (is_string($name)) $output->writeln($name);
+            $process->run();
+            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+                $output->writeln('=> '.$command);
+                $output->write($process->getOutput());
+            }
+            if (! $process->isSuccessful()) {
+                $this->dd($output, $process);
+            }
         }
 
-        $upload->run();
-        $output->write($upload->getOutput());
-        if (! $upload->isSuccessful()) {
-            $this->dd($output, $upload);
+        $filesystem->deleteDirectory($directory);
+
+        $output->writeln('<info>Site was generated successfully.</info>');
+    }
+
+    protected function getRepository() {
+        $process = new Process('git remote get-url --push origin');
+        $process->run();
+
+        return trim($process->getOutput());
+    }
+
+    protected function getBranch() {
+        $process = new Process('git rev-parse --abbrev-ref HEAD');
+        $process->run();
+
+        return hash_equals('master', trim($process->getOutput())) ? 'gh-pages' : 'master';
+    }
+
+    protected function prepareRepository(string $directory, string $repository, string $branch) {
+        $clone = new Process("git clone --depth=1 -b ${branch} ${repository} ${directory}");
+        $clone->setWorkingDirectory(root_dir());
+        $clone->run();
+
+
+        $filesystem = app(Filesystem::class);
+        if ($clone->isSuccessful()) {
+            $filesystem->copyDirectory(root_dir('public'), root_dir($directory));
+            return;
         }
 
-        $publish->run();
-        $output->write($publish->getOutput());
+        $filesystem->makeDirectory(root_dir($directory));
+        $filesystem->copyDirectory(root_dir('public'), root_dir($directory));
 
-        if ($publish->isSuccessful()) {
-            $output->writeln('<info>Site was generated successfully.</info>');
-        } else {
-            $this->dd($output, $publish);
-        }
+        $init = new Process("git init; git checkout -b ${branch}; git remote add origin ${repository}");
+        $init->setWorkingDirectory(root_dir($directory));
+        $init->run();
     }
 
     protected function dd(OutputInterface $output, Process $process)
     {
         $output->writeln('<error>There was some error.</error>'.PHP_EOL.$process->getErrorOutput());
+        $filesystem = app(Filesystem::class);
+        if ($filesystem->exists(root_dir($this->directory))) {
+            $filesystem->deleteDirectory(root_dir($this->directory));
+        }
         exit($process->getExitCode());
     }
 
