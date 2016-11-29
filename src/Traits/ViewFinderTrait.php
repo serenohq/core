@@ -12,12 +12,9 @@ trait ViewFinderTrait
      *
      * @return SplFileInfo
      */
-    protected function createSplFileInfoInstance(string $filename): SplFileInfo
+    protected function createSplFileInfoInstance(string $directory, string $filename): SplFileInfo
     {
-        $directory = dirname($filename);
-        $filename = basename($filename);
-
-        return new SplFileInfo($directory.DIRECTORY_SEPARATOR.$filename, '', $filename);
+        return new SplFileInfo($directory.DIRECTORY_SEPARATOR.$filename, $directory, $filename);
     }
 
     /**
@@ -31,6 +28,14 @@ trait ViewFinderTrait
     {
         $viewFactory = app(Factory::class);
 
-        return $this->createSplFileInfoInstance($viewFactory->getFInder()->find($name));
+        $pattern = str_replace('.', DIRECTORY_SEPARATOR, $name);
+        $path = $viewFactory->getFinder()->find($name);
+
+        $pos = strpos($path, $pattern);
+
+        $directory = substr($path, 0, $pos);
+        $filename = substr($path, $pos);
+
+        return $this->createSplFileInfoInstance($directory, $filename);
     }
 }

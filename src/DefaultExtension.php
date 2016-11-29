@@ -29,4 +29,8 @@ class DefaultExtension extends AbstractExtension
             \Znck\Sereno\Processors\MarkdownProcessor::class,
         ];
     }
+
+    public function getViewsDirectory(): array {
+        return [__DIR__.'/../resources/views/blog/index.blade.php'];
+    }
 }
