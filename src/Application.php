@@ -10,18 +10,15 @@ use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
-use InvalidArgumentException;
 use Symfony\Component\Console\Application as Console;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Znck\Sereno\Builders\PageBuilder;
 use Znck\Sereno\Commands\BuildCommand;
 use Znck\Sereno\Commands\DeployCommand;
 use Znck\Sereno\Commands\NewPostCommand;
-use Znck\Sereno\Contracts\Builder;
 use Znck\Sereno\Contracts\Extension;
 
 class Application extends Container
@@ -156,7 +153,8 @@ class Application extends Container
         $this->line('<info>Ready.</info>'.PHP_EOL);
     }
 
-    protected function configureContentsDirectory($directories = []) {
+    protected function configureContentsDirectory($directories = [])
+    {
         $default = config('sereno.directory', []);
 
         if (count($default) < 1) {
@@ -189,7 +187,8 @@ class Application extends Container
         return $this->make(Repository::class);
     }
 
-    protected function registerExtensions() {
+    protected function registerExtensions()
+    {
         $this->line('Boot extensions.');
         $extensions = (array) config('sereno.extensions');
         $this->config()->set('sereno.extensions', array_unique($extensions));

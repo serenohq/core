@@ -10,21 +10,21 @@ class BlogBuilder implements Builder
     use ViewFinderTrait;
 
     /**
-     * Blog directory
+     * Blog directory.
      *
      * @var string
      */
     protected $blogDirectory;
 
     /**
-     * Blog URL prefix
+     * Blog URL prefix.
      *
      * @var string
      */
     protected $blogUrl;
 
     /**
-     * Current page number
+     * Current page number.
      *
      * @var int
      */

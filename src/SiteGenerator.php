@@ -3,7 +3,6 @@
 namespace Znck\Sereno;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 use Illuminate\View\Factory;
 use Symfony\Component\Finder\SplFileInfo;
 use Znck\Sereno\Contracts\Builder;
@@ -89,7 +88,7 @@ class SiteGenerator
                     }
                 }
 
-                if (!array_key_exists($file->getRealPath(), $keys)) {
+                if (! array_key_exists($file->getRealPath(), $keys)) {
                     $keys[$file->getRealPath()] = true;
 
                     return true;

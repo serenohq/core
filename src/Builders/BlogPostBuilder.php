@@ -15,14 +15,14 @@ class BlogPostBuilder implements Builder
     protected $posts = [];
 
     /**
-     * Blog directory
+     * Blog directory.
      *
      * @var string
      */
     protected $blogDirectory;
 
     /**
-     * Blog URL prefix
+     * Blog URL prefix.
      *
      * @var string
      */
@@ -114,7 +114,7 @@ class BlogPostBuilder implements Builder
                 $this->posts[$file->getRelativePathname()] += [
                     'path'     => $this->getPostUrl($file),
                     'pathname' => $file->getRelativePathname(),
-                    'title' => ucfirst(str_replace('-', ' ', array_first(explode('.', $file->getFilename(), 2)))),
+                    'title'    => ucfirst(str_replace('-', ' ', array_first(explode('.', $file->getFilename(), 2)))),
                 ];
             }
         }

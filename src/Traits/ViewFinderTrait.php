@@ -1,33 +1,34 @@
 <?php namespace Znck\Sereno\Traits;
 
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\View\Factory;
 use Symfony\Component\Finder\SplFileInfo;
 
-trait ViewFinderTrait {
-
+trait ViewFinderTrait
+{
     /**
-     * Create instance of SplFileInfo
+     * Create instance of SplFileInfo.
      *
-     * @param  string $path
+     * @param string $path
      *
      * @return SplFileInfo
      */
-    protected function createSplFileInfoInstance(string $filename): SplFileInfo {
+    protected function createSplFileInfoInstance(string $filename): SplFileInfo
+    {
         $directory = dirname($filename);
         $filename = basename($filename);
+
         return new SplFileInfo($directory.DIRECTORY_SEPARATOR.$filename, '', $filename);
     }
 
     /**
-     * Find view
+     * Find view.
      *
-     * @param  string $name
+     * @param string $name
      *
      * @return SplFileInfo
      */
-    public function getView(string $name): SplFileInfo {
+    public function getView(string $name): SplFileInfo
+    {
         $viewFactory = app(Factory::class);
 
         return $this->createSplFileInfoInstance($viewFactory->getFInder()->find($name));
