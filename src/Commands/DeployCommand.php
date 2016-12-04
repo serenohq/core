@@ -31,15 +31,17 @@ class DeployCommand extends Command
         $this->prepareRepository($directory, $repository, $branch);
 
         $commands = [
-            "git add -A" => null,
+            'git add -A'                                                                                               => null,
             "git -c user.name='${name}' -c user.email='${email}' commit -m ':rocket: Sereno Auto Deploy\n\n[ci skip]'" => null,
-            "git push origin ${branch}" => "Uploading...",
+            "git push origin ${branch}"                                                                                => 'Uploading...',
         ];
 
         foreach ($commands as $command => $name) {
             $process = new Process($command);
             $process->setWorkingDirectory(root_dir($directory));
-            if (is_string($name)) $output->writeln($name);
+            if (is_string($name)) {
+                $output->writeln($name);
+            }
             $process->run();
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
                 $output->writeln('=> '.$command);
@@ -54,29 +56,32 @@ class DeployCommand extends Command
         $output->writeln('<info>Site was generated successfully.</info>');
     }
 
-    protected function getRepository() {
+    protected function getRepository()
+    {
         $process = new Process('git remote get-url --push origin');
         $process->run();
 
         return trim($process->getOutput());
     }
 
-    protected function getBranch() {
+    protected function getBranch()
+    {
         $process = new Process('git rev-parse --abbrev-ref HEAD');
         $process->run();
 
         return hash_equals('master', trim($process->getOutput())) ? 'gh-pages' : 'master';
     }
 
-    protected function prepareRepository(string $directory, string $repository, string $branch) {
+    protected function prepareRepository(string $directory, string $repository, string $branch)
+    {
         $clone = new Process("git clone --depth=1 -b ${branch} ${repository} ${directory}");
         $clone->setWorkingDirectory(root_dir());
         $clone->run();
 
-
         $filesystem = app(Filesystem::class);
         if ($clone->isSuccessful()) {
             $filesystem->copyDirectory(root_dir('public'), root_dir($directory));
+
             return;
         }
 
@@ -95,7 +100,8 @@ class DeployCommand extends Command
         exit($process->getExitCode());
     }
 
-    protected function cleanup() {
+    protected function cleanup()
+    {
         $filesystem = app(Filesystem::class);
         if ($filesystem->exists(root_dir($this->directory))) {
             $filesystem->deleteDirectory(root_dir($this->directory));

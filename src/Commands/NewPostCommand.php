@@ -53,7 +53,7 @@ class NewPostCommand extends Command
             $directory .= DIRECTORY_SEPARATOR.$collection;
         }
 
-        if (!$filesystem->exists($directory)) {
+        if (! $filesystem->exists($directory)) {
             $filesystem->makeDirectory($directory, 0755, true);
         }
 
@@ -77,7 +77,6 @@ post:
 > Start writing...
 EOF
         );
-
 
         $output->writeln("New post created in <info>${relative}</info>. Start writing...");
     }
