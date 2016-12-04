@@ -306,7 +306,6 @@ class Application extends Container
             error_reporting(error_reporting() & ~E_NOTICE & ~E_WARNING);
         });
 
-
         $directories = (array) config('sereno.views', []);
         foreach (array_reverse(config('sereno.extensions')) as $name) {
             $extension = $this->make($name);
