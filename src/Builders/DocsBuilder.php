@@ -13,6 +13,7 @@ use Znck\Sereno\ProcessorFactory;
 
 class DocsBuilder implements Builder
 {
+    use \Znck\Sereno\Traits\ViewFinderTrait;
     /**
      * File processor generates HTML from source.
      *
@@ -110,9 +111,7 @@ class DocsBuilder implements Builder
 
     protected function getRedirectFile()
     {
-        $filename = __DIR__.'/../resources/views/redirect.blade.php';
-
-        return new SplFileInfo($filename, '', 'redirect.blade.php');
+        return $this->getView('redirect');
     }
 
     protected function compileWithBlade(string $content, array $data): string
