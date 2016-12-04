@@ -28,11 +28,12 @@ class NewPostCommand extends Command
         $today = date('F d, Y');
 
         $filesystem = app(Filesystem::class);
+        $directory = root_dir(config('blog.directory'));
 
         if ($input->getOption('collection')) {
             $collections = array_map(function ($file) {
                 return basename($file);
-            }, $filesystem->directories(content_dir('_blog')));
+            }, $filesystem->directories($directory));
 
             if (count($collections)) {
                 $output->writeln("\n<comment>Your collections:</comment>");
@@ -49,14 +50,22 @@ class NewPostCommand extends Command
 
             $collection = str_slug($helper->ask($input, $output, $question));
 
-            if (! $filesystem->isDirectory(content_dir('_blog'.DIRECTORY_SEPARATOR.$collection))) {
-                $filesystem->makeDirectory(content_dir('_blog'.DIRECTORY_SEPARATOR.$collection), 0755, true);
-            }
-
-            $filename = $collection.DIRECTORY_SEPARATOR.$filename;
+            $directory .= DIRECTORY_SEPARATOR.$collection;
         }
 
-        $filesystem->put(content_dir('_blog/'.$filename), <<<EOF
+        if (!$filesystem->exists($directory)) {
+            $filesystem->makeDirectory($directory, 0755, true);
+        }
+
+        $filename = $directory.DIRECTORY_SEPARATOR.$filename;
+        $relative = str_replace(root_dir().DIRECTORY_SEPARATOR, '', $filename);
+
+        if ($filesystem->exists($filename)) {
+            $output->writeln("<error>File ${relative} already exists.</error>");
+            exit(-1);
+        }
+
+        $filesystem->put($filename, <<<EOF
 ---
 pageTitle: ${title} -
 post:
@@ -69,6 +78,7 @@ post:
 EOF
         );
 
-        $output->writeln("New post created in <info>content/_blog/${filename}</info>. Start writing...");
+
+        $output->writeln("New post created in <info>${relative}</info>. Start writing...");
     }
 }

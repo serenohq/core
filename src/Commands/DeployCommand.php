@@ -32,7 +32,7 @@ class DeployCommand extends Command
 
         $commands = [
             "git add -A" => null,
-            "git -c user.name='${name}' -c user.email='${email}' commit -m ':rocket: Sereno Auto Deploy'" => null,
+            "git -c user.name='${name}' -c user.email='${email}' commit -m ':rocket: Sereno Auto Deploy\n\n[ci skip]'" => null,
             "git push origin ${branch}" => "Uploading...",
         ];
 
