@@ -24,7 +24,7 @@ class DeployCommand extends Command
         $repository = config('github.repository') ?? $this->getRepository();
         $branch = config('github.branch') ?? $this->getBranch();
         $name = config('github.user.name') ?? 'Sereno Deployer';
-        $email = config('github.user.email') ?? 'hi@znck.me';
+        $email = config('github.user.email') ?? 'builtwith@sereno.in';
 
         $this->build($output);
 
