@@ -146,6 +146,10 @@ class BlogPostBuilder implements Builder
         foreach ($this->posts[$file->getRelativePathname()] as $key => $value) {
             $data[$key] = json_decode(json_encode($value), false);
         }
+        $data += [
+            'pageTitle' => (string) array_get($data, 'title'),
+            'pageDescription' => (string) array_get($data, 'brief'),
+        ];
 
         $filenames = array_keys($this->posts);
         $index = array_search($file->getRelativePathname(), $filenames);
