@@ -4,11 +4,11 @@
   <a href="https://styleci.io/repos/74711201">
     <img src="https://styleci.io/repos/74711201/shield" alt="StyleCI Status" />
   </a>
-  <a href="https://circleci.com/gh/znck/sereno-core">
-    <img src="https://circleci.com/gh/znck/sereno-core.svg?style=svg" alt="Build Status" />
+  <a href="https://circleci.com/gh/serenohq/sereno-core">
+    <img src="https://circleci.com/gh/serenohq/sereno-core.svg?style=svg" alt="Build Status" />
   </a>
-  <a href="https://coveralls.io/github/znck/sereno-core?branch=master">
-    <img src="https://coveralls.io/repos/github/znck/sereno-core/badge.svg?branch=master&style=flat-square" alt="Coverage Status" />
+  <a href="https://coveralls.io/github/serenohq/sereno-core?branch=master">
+    <img src="https://coveralls.io/repos/github/serenohq/sereno-core/badge.svg?branch=master&style=flat-square" alt="Coverage Status" />
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License" />
@@ -16,12 +16,12 @@
   <a href="https://packagist.org/packages/znck/sereno-core">
     <img src="https://img.shields.io/packagist/v/znck/sereno-core.svg?style=flat-square" alt="Packagist" />
   </a>
-  <a href="https://github.com/znck/sereno-core/releases">
-    <img src="https://img.shields.io/github/release/znck/sereno-core.svg?style=flat-square" alt="Latest Version" />
+  <a href="https://github.com/serenohq/sereno-core/releases">
+    <img src="https://img.shields.io/github/release/serenohq/sereno-core.svg?style=flat-square" alt="Latest Version" />
   </a>
 
-  <a href="https://github.com/znck/sereno-core/issues">
-    <img src="https://img.shields.io/github/issues/znck/sereno-core.svg?style=flat-square" alt="Issues" />
+  <a href="https://github.com/serenohq/sereno-core/issues">
+    <img src="https://img.shields.io/github/issues/serenohq/sereno-core.svg?style=flat-square" alt="Issues" />
   </a>
 </p>
 
@@ -30,7 +30,7 @@
 
 > **Note:** This repository contains the core code of Sereno.
 > If you want to build an website using Sereno, visit the main
-> [Sereno repository](https://github.com/znck/sereno).
+> [Sereno repository](https://github.com/serenohq/sereno).
 
 Sereno is a simple and powerful blog creation tool that allows
 you to share your stories with the world. With power of Laravel's

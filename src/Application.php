@@ -19,6 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Znck\Sereno\Commands\BuildCommand;
 use Znck\Sereno\Commands\DeployCommand;
 use Znck\Sereno\Commands\NewPostCommand;
+use Znck\Sereno\Commands\OverrideCommand;
 use Znck\Sereno\Contracts\Extension;
 
 class Application extends Container
@@ -97,6 +98,7 @@ class Application extends Container
                     new BuildCommand(),
                     new NewPostCommand(),
                     new DeployCommand(),
+                    new OverrideCommand(),
                 ],
                 config('sereno.commands', [])
             ));
@@ -344,9 +346,7 @@ class Application extends Container
 
         foreach ($configs as $name => $value) {
             $key = $prefix.$name;
-            if (hash_equals('sereno', $key)) {
-                $this->loadApplicationConfiguration((array) $value);
-            } elseif (is_array($value)) {
+            if (is_array($value) and array_values($value) !== $value) {
                 $this->mergeConfig($value, $name.'.');
             } else {
                 $repository->set($key, $value);
