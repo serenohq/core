@@ -90,7 +90,6 @@
         'yields'  => 'markdown-body',
     ],
 
-
     /*
     |--------------------------------------------------------------------------
     | Blog
@@ -156,8 +155,8 @@
         | true and put your Disqus site ID in `disqus_id`.
         |
         */
-    	'enable_comments' => true,
-        'disqus_id' => '',
+        'enable_comments' => true,
+        'disqus_id'       => '',
     ],
 
     /*

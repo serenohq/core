@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Znck\Sereno\SiteGenerator;
 
 class OverrideCommand extends Command
 {
@@ -52,7 +51,7 @@ class OverrideCommand extends Command
         }
         $overridden = root_dir($directory).DIRECTORY_SEPARATOR.str_replace('.', DIRECTORY_SEPARATOR, $name).'.blade.php';
 
-        if (!$force and $this->getFilesystem()->exists($overridden)) {
+        if (! $force and $this->getFilesystem()->exists($overridden)) {
             $output->writeln("<error>View [${name}] is already overridden. Use --force to overwrite it.</error>");
             exit(-1);
         }
@@ -63,11 +62,13 @@ class OverrideCommand extends Command
         $output->writeln("<info>The view [${name}] is overridden in ${filename}</info>");
     }
 
-    protected function getFilesystem(): Filesystem {
+    protected function getFilesystem(): Filesystem
+    {
         return app(Filesystem::class);
     }
 
-    protected function getViewFinder(): FileViewFinder {
+    protected function getViewFinder(): FileViewFinder
+    {
         $factory = app(Factory::class);
 
         return $factory->getFinder();

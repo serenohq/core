@@ -147,7 +147,7 @@ class BlogPostBuilder implements Builder
             $data[$key] = json_decode(json_encode($value), false);
         }
         $data += [
-            'pageTitle' => (string) array_get($data, 'title'),
+            'pageTitle'       => (string) array_get($data, 'title'),
             'pageDescription' => (string) array_get($data, 'brief'),
         ];
 
