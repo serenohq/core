@@ -73,7 +73,9 @@ class SiteGenerator
         foreach ($dirs as $dir) {
             $path = root_dir($dir);
 
-            $files = array_merge($files, $this->filesystem->allFiles($path));
+            if ($this->filesystem->exists($path)) {
+                $files = array_merge($files, $this->filesystem->allFiles($path));
+            }
         }
 
         $keys = [];
