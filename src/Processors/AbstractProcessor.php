@@ -4,7 +4,6 @@ namespace Znck\Sereno\Processors;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 use Symfony\Component\Finder\SplFileInfo;
 use Znck\Sereno\Contracts\Processor;
 
