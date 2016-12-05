@@ -67,15 +67,11 @@ abstract class AbstractProcessor implements Processor
         return $file->getRelativePath().DIRECTORY_SEPARATOR.$basename.DIRECTORY_SEPARATOR.$this->outputIndexName;
     }
 
-    protected function getPath(SplFileInfo $file): string
+    protected function getPath(string $filename): string
     {
-        $extension = $this->getOutputFileExtension($file);
+        $filename = str_replace(root_dir(), '', realpath($filename));
 
-        if (is_null($extension)) {
-            throw new InvalidArgumentException('Expected blade file, found '.$file->getRelativePath());
-        }
-
-        return str_replace_last($extension, '', $file->getRelativePathname());
+        return trim(DIRECTORY_SEPARATOR, $filename);
     }
 
     protected function getOutputFileExtension(SplFileInfo $file)

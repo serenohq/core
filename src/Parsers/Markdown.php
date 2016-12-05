@@ -22,22 +22,19 @@ class Markdown
 
     private static function cleanLeadingSpace($text)
     {
-        $firstLine = 0;
-
-        print_r($text);
-
         $lines = explode("\n", $text);
+        $firstLine = array_first($lines, null, '');
 
-        foreach ($lines as $key => $value) {
-            if (strlen($value) > 0) {
-                $firstLine = $key;
+        foreach ($lines as $line) {
+            if (strlen($line) > 0) {
+                $firstLine = $line;
                 break;
             }
         }
 
-        preg_match('/^( *)/', $firstLine, $matches);
+        preg_match('/^([\s]*)/', $firstLine, $matches);
 
-        return preg_replace('/^[ ]{'.strlen($matches[1]).'}/m', '', $text);
+        return preg_replace('/^[ ]{'.strlen($matches[0]).'}/m', '', $text);
     }
 
     /**
