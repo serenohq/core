@@ -43,5 +43,6 @@
   },
   "scripts": {
     "test": "phpunit"
-  }
+  },
+  "bind": ["sereno"]
 }

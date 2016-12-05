@@ -16,6 +16,7 @@ use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Yaml\Yaml;
 use Znck\Sereno\Commands\BuildCommand;
 use Znck\Sereno\Commands\DeployCommand;
 use Znck\Sereno\Commands\NewPostCommand;
@@ -92,16 +93,12 @@ class Application extends Container
 
     protected function registerCommands()
     {
-        $this->console->addCommands(
-            array_merge(
-                [
-                    new BuildCommand(),
-                    new NewPostCommand(),
-                    new DeployCommand(),
-                    new OverrideCommand(),
-                ],
-                config('sereno.commands', [])
-            ));
+        $this->console->addCommands([
+                new BuildCommand(),
+                new NewPostCommand(),
+                new DeployCommand(),
+                new OverrideCommand(),
+            ]);
     }
 
     public function listen($event, $listener)
@@ -119,14 +116,14 @@ class Application extends Container
         $filesystem = $this->make(Filesystem::class);
 
         if (in_array($env, [null, 'default'])) {
-            $configFile = $this->rootDirectory('config.php');
+            $configFile = $this->rootDirectory('sereno.yml');
         } else {
-            $configFile = $this->rootDirectory("config.${env}.php");
+            $configFile = $this->rootDirectory("sereno.${env}.yml");
         }
 
         $this->line("Loading config file: <info>${configFile}</info>");
         if ($filesystem->exists($configFile)) {
-            $configs = $filesystem->getRequire($configFile);
+            $configs = Yaml::parse($filesystem->get($configFile));
             $this->mergeConfig($configs);
         }
     }

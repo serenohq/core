@@ -24,6 +24,8 @@ class Markdown
     {
         $firstLine = 0;
 
+        print_r($text);
+
         $lines = explode("\n", $text);
 
         foreach ($lines as $key => $value) {

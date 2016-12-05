@@ -33,13 +33,13 @@ class MarkdownProcessor extends AbstractProcessor
     {
         $path = $this->getPath($file);
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
+        app()->line('Markdown: '.$file->getRelativePathname().' -> '.$filename);
 
         $data['currentViewPath'] = $path;
         $data['currentUrlPath'] = $this->getUrl($filename);
 
         $content = $this->getContent($file, $data, $options);
 
-        app()->line('Markdown: '.$file->getRelativePathname().' -> '.$filename);
         $this->writeContent($filename, $content);
 
         return $this;
