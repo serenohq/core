@@ -1,4 +1,4 @@
-<?php namespace Znck\Sereno\Contracts;
+<?php namespace Sereno\Contracts;
 
 interface Extension
 {

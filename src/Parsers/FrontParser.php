@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Parsers;
+namespace Sereno\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 

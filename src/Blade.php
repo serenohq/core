@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno;
+namespace Sereno;
 
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
@@ -23,7 +23,7 @@ class Blade
     protected function registerMarkdownDirective()
     {
         $this->getCompiler()->directive('markdown', function () {
-            return "<?php echo \\Znck\\Sereno\\Parsers\\Markdown::parse(<<<'EOT'";
+            return "<?php echo \\Sereno\\Parsers\\Markdown::parse(<<<'EOT'";
         });
 
         $this->getCompiler()->directive('endmarkdown', function () {
@@ -54,7 +54,7 @@ class Blade
     protected function registerUrlDirective()
     {
         $this->getCompiler()->directive('url', function ($expression) {
-            return "<?php echo \\Znck\\Sereno\\Blade::urlDirective(${expression} ?? \$currentUrlPath); ?>";
+            return "<?php echo \\Sereno\\Blade::urlDirective(${expression} ?? \$currentUrlPath); ?>";
         });
     }
 
@@ -74,7 +74,7 @@ class Blade
     protected function registerActiveDirective()
     {
         $this->getCompiler()->directive('active', function ($expression) {
-            return "<?php echo \\Znck\\Sereno\\Blade::activeDirective(\$currentUrlPath, ${expression}); ?>";
+            return "<?php echo \\Sereno\\Blade::activeDirective(\$currentUrlPath, ${expression}); ?>";
         });
     }
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Znck\Sereno;
+namespace Sereno;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Factory;
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Builder;
+use Sereno\Contracts\Builder;
 
 class SiteGenerator
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Parsers;
+namespace Sereno\Parsers;
 
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
@@ -8,8 +8,8 @@ use League\CommonMark\Extras\SmartPunct\SmartPunctExtension;
 use League\CommonMark\Extras\TwitterHandleAutolink\TwitterHandleAutolinkExtension;
 use Webuni\CommonMark\AttributesExtension\AttributesExtension;
 use Webuni\CommonMark\TableExtension\TableExtension;
-use Znck\Sereno\Parsers\Markdown\EmojiParser;
-use Znck\Sereno\Parsers\Markdown\HighlightedCodeRender;
+use Sereno\Parsers\Markdown\EmojiParser;
+use Sereno\Parsers\Markdown\HighlightedCodeRender;
 
 class Markdown
 {
@@ -23,8 +23,6 @@ class Markdown
     private static function cleanLeadingSpace($text)
     {
         $firstLine = 0;
-
-        print_r($text);
 
         $lines = explode("\n", $text);
 

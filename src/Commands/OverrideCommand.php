@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Commands;
+namespace Sereno\Commands;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Factory;
@@ -54,6 +54,11 @@ class OverrideCommand extends Command
         if (! $force and $this->getFilesystem()->exists($overridden)) {
             $output->writeln("<error>View [${name}] is already overridden. Use --force to overwrite it.</error>");
             exit(-1);
+        }
+
+        $overriddenDir = dirname($overridden);
+        if (!$this->getFilesystem()->exists($overriddenDir)) {
+            $this->getFilesystem()->makeDirectory($overriddenDir, 0755, true);
         }
 
         $this->getFilesystem()->copy($original, $overridden);

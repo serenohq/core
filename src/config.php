@@ -225,7 +225,7 @@
     ],
 
     'sereno' => [
-
+        'public' => 'public',
         /*
         |--------------------------------------------------------------------------
         | Website URL
@@ -258,7 +258,7 @@
         |
         */
         'extensions' => [
-            Znck\Sereno\DefaultExtension::class,
+            Sereno\DefaultExtension::class,
         ],
 
         /*

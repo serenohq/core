@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno;
+namespace Sereno;
 
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
@@ -17,11 +17,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Yaml\Yaml;
-use Znck\Sereno\Commands\BuildCommand;
-use Znck\Sereno\Commands\DeployCommand;
-use Znck\Sereno\Commands\NewPostCommand;
-use Znck\Sereno\Commands\OverrideCommand;
-use Znck\Sereno\Contracts\Extension;
+use Sereno\Commands\InitCommand;
+use Sereno\Commands\BuildCommand;
+use Sereno\Commands\DeployCommand;
+use Sereno\Commands\NewPostCommand;
+use Sereno\Commands\OverrideCommand;
+use Sereno\Contracts\Extension;
+use Sereno\Extensions\DefaultExtension;
 
 class Application extends Container
 {
@@ -98,6 +100,7 @@ class Application extends Container
                 new NewPostCommand(),
                 new DeployCommand(),
                 new OverrideCommand(),
+                new InitCommand(),
             ]);
     }
 
@@ -190,6 +193,7 @@ class Application extends Container
     {
         $this->line('Boot extensions.');
         $extensions = (array) config('sereno.extensions');
+        array_unshift($extensions, DefaultExtension::class);
         $this->config()->set('sereno.extensions', array_unique($extensions));
 
         foreach (config('sereno.extensions') as $name) {

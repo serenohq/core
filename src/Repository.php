@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno;
+namespace Sereno;
 
 use Illuminate\Support\Arr;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Processors;
+namespace Sereno\Processors;
 
 use Symfony\Component\Finder\SplFileInfo;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Znck\Sereno\Extractors;
+namespace Sereno\Extractors;
 
 use Illuminate\View\Factory;
 use Illuminate\View\View;
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Extractor;
+use Sereno\Contracts\Extractor;
 
 class BladeExtractor implements Extractor
 {

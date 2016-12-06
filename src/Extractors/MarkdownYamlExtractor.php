@@ -1,15 +1,15 @@
 <?php
 
-namespace Znck\Sereno\Extractors;
+namespace Sereno\Extractors;
 
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Extractor;
-use Znck\Sereno\Parsers\FrontParser;
+use Sereno\Contracts\Extractor;
+use Sereno\Parsers\FrontParser;
 
 class MarkdownYamlExtractor implements Extractor
 {
     /**
-     * @var \Znck\Sereno\Parsers\FrontParser
+     * @var \Sereno\Parsers\FrontParser
      */
     protected $parser;
 

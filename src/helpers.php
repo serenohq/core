@@ -1,7 +1,7 @@
 <?php
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Znck\Sereno\Application;
+use Sereno\Application;
 
 if (! function_exists('app')) {
     /**
@@ -29,21 +29,14 @@ if (! function_exists('root_dir')) {
 if (! function_exists('cache_dir')) {
     function cache_dir(string $path = null)
     {
-        return app()->rootDirectory('_cache'.DIRECTORY_SEPARATOR.trim($path, DIRECTORY_SEPARATOR));
+        return app()->rootDirectory(config('sereno.cache', '_cache').DIRECTORY_SEPARATOR.trim($path, DIRECTORY_SEPARATOR));
     }
 }
 
 if (! function_exists('public_dir')) {
     function public_dir(string $path = null)
     {
-        return app()->rootDirectory('public'.DIRECTORY_SEPARATOR.trim($path, DIRECTORY_SEPARATOR));
-    }
-}
-
-if (! function_exists('content_dir')) {
-    function content_dir(string $path = null)
-    {
-        return app()->rootDirectory('content'.DIRECTORY_SEPARATOR.trim($path, DIRECTORY_SEPARATOR));
+        return app()->rootDirectory(config('sereno.public').DIRECTORY_SEPARATOR.trim($path, DIRECTORY_SEPARATOR));
     }
 }
 
@@ -68,6 +61,6 @@ if (! function_exists('event')) {
 if (! function_exists('url')) {
     function url(string $path)
     {
-        return \Znck\Sereno\Blade::urlDirective($path);
+        return \Sereno\Blade::urlDirective($path);
     }
 }
