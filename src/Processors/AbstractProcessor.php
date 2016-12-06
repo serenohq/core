@@ -5,8 +5,8 @@ namespace Sereno\Processors;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Processor;
+use Symfony\Component\Finder\SplFileInfo;
 
 abstract class AbstractProcessor implements Processor
 {

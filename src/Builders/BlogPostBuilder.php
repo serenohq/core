@@ -1,9 +1,9 @@
 <?php namespace Sereno\Builders;
 
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Builder;
 use Sereno\DataExtractor;
 use Sereno\ProcessorFactory;
+use Symfony\Component\Finder\SplFileInfo;
 
 class BlogPostBuilder implements Builder
 {

@@ -1,7 +1,7 @@
 <?php
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Sereno\Application;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 if (! function_exists('app')) {
     /**

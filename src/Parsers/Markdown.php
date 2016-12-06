@@ -6,10 +6,10 @@ use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
 use League\CommonMark\Extras\SmartPunct\SmartPunctExtension;
 use League\CommonMark\Extras\TwitterHandleAutolink\TwitterHandleAutolinkExtension;
-use Webuni\CommonMark\AttributesExtension\AttributesExtension;
-use Webuni\CommonMark\TableExtension\TableExtension;
 use Sereno\Parsers\Markdown\EmojiParser;
 use Sereno\Parsers\Markdown\HighlightedCodeRender;
+use Webuni\CommonMark\AttributesExtension\AttributesExtension;
+use Webuni\CommonMark\TableExtension\TableExtension;
 
 class Markdown
 {

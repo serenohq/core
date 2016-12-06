@@ -4,8 +4,8 @@ namespace Sereno;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Factory;
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Builder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class SiteGenerator
 {
