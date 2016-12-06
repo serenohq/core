@@ -1,5 +1,5 @@
 {
-  "name": "znck/sereno-core",
+  "name": "sereno/sereno-core",
   "description": "A Static blog generator.",
   "type": "library",
   "license": "MIT",
