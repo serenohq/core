@@ -96,7 +96,7 @@ class Application extends Container
             if ($env !== 'default') {
                 $this->loadConfigFileForEnv($env);
             }
-            if (!$this->make(Filesystem::class)->exists(root_dir('sereno.yml'))) {
+            if (! $this->make(Filesystem::class)->exists(root_dir('sereno.yml'))) {
                 $this->output->writeln('<error>This is not as sereno project.</error>');
                 exit(-1);
             }
@@ -365,7 +365,8 @@ class Application extends Container
         }
     }
 
-    protected function setRootDirectory(string $dir) {
+    protected function setRootDirectory(string $dir)
+    {
         $this->rootDirectory = realpath($dir);
     }
 }

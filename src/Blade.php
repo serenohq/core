@@ -23,11 +23,11 @@ class Blade
     protected function registerMarkdownDirective()
     {
         $this->getCompiler()->directive('markdown', function () {
-            return "<?php ob_start(); ?>";
+            return '<?php ob_start(); ?>';
         });
 
         $this->getCompiler()->directive('endmarkdown', function () {
-            return "<?php \$__markdown_contents__ = ob_get_contents(); ob_end_clean(); echo \\Sereno\\Parsers\\Markdown::parse(\$__markdown_contents__); ?>";
+            return '<?php $__markdown_contents__ = ob_get_contents(); ob_end_clean(); echo \\Sereno\\Parsers\\Markdown::parse($__markdown_contents__); ?>';
         });
     }
 
