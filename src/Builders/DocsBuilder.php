@@ -102,14 +102,17 @@ class DocsBuilder implements Builder
 
         foreach ($docs as $doc) {
             if (starts_with($doc->getBasename(), $landing.'.')) {
-                $this->processor->process($doc, $data,
+                $this->processor->process($doc, $data + compact('index'),
                         [
+                            'view' => [
+                                'extends' => config('docs.extends'),
+                                'yields'  => config('docs.yields'),
+                            ],
                             'interceptor' => function () {
                                 return trim($this->baseURL.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
                             },
                         ]);
             }
-
             $this->processor->process($doc, $data + compact('index'), $options);
         }
     }

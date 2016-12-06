@@ -111,7 +111,7 @@ class DeployCommand extends Command
     protected function build(OutputInterface $output)
     {
         $output->writeln('Building website...');
-        $gulp = new Process('./node_modules/.bin/gulp');
+        $gulp = new Process('npm run sereno:build');
         app(Filesystem::class)->cleanDirectory(cache_dir());
         $gulp->run();
         if (! $gulp->isSuccessful()) {
