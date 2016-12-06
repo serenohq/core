@@ -22,13 +22,12 @@ class Markdown
 
     private static function cleanLeadingSpace($text)
     {
-        $firstLine = 0;
-
         $lines = explode("\n", $text);
+        $firstLine = array_first($lines);
 
-        foreach ($lines as $key => $value) {
+        foreach ($lines as $value) {
             if (strlen($value) > 0) {
-                $firstLine = $key;
+                $firstLine = $value;
                 break;
             }
         }
