@@ -3,4 +3,4 @@
 
 require __DIR__.'/vendor/autoload.php';
 
-\Znck\Sereno\Application::getInstance()->start(getcwd());
+\Sereno\Application::getInstance()->start(getcwd());
