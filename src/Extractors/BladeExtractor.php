@@ -4,8 +4,8 @@ namespace Sereno\Extractors;
 
 use Illuminate\View\Factory;
 use Illuminate\View\View;
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Extractor;
+use Symfony\Component\Finder\SplFileInfo;
 
 class BladeExtractor implements Extractor
 {

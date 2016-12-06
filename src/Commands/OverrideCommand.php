@@ -57,7 +57,7 @@ class OverrideCommand extends Command
         }
 
         $overriddenDir = dirname($overridden);
-        if (!$this->getFilesystem()->exists($overriddenDir)) {
+        if (! $this->getFilesystem()->exists($overriddenDir)) {
             $this->getFilesystem()->makeDirectory($overriddenDir, 0755, true);
         }
 
