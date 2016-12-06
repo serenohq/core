@@ -10,6 +10,13 @@ use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
+use Sereno\Commands\BuildCommand;
+use Sereno\Commands\DeployCommand;
+use Sereno\Commands\InitCommand;
+use Sereno\Commands\NewPostCommand;
+use Sereno\Commands\OverrideCommand;
+use Sereno\Contracts\Extension;
+use Sereno\Extensions\DefaultExtension;
 use Symfony\Component\Console\Application as Console;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -17,13 +24,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Yaml\Yaml;
-use Sereno\Commands\InitCommand;
-use Sereno\Commands\BuildCommand;
-use Sereno\Commands\DeployCommand;
-use Sereno\Commands\NewPostCommand;
-use Sereno\Commands\OverrideCommand;
-use Sereno\Contracts\Extension;
-use Sereno\Extensions\DefaultExtension;
 
 class Application extends Container
 {

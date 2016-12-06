@@ -2,9 +2,9 @@
 
 namespace Sereno\Extractors;
 
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Extractor;
 use Sereno\Parsers\FrontParser;
+use Symfony\Component\Finder\SplFileInfo;
 
 class MarkdownYamlExtractor implements Extractor
 {

@@ -5,11 +5,11 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Builder;
 use Sereno\DataExtractor;
 use Sereno\Parsers\Markdown;
 use Sereno\ProcessorFactory;
+use Symfony\Component\Finder\SplFileInfo;
 
 class DocsBuilder implements Builder
 {
@@ -106,7 +106,7 @@ class DocsBuilder implements Builder
                         [
                             'interceptor' => function () {
                                 return trim($this->baseURL.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
-                            }
+                            },
                         ]);
             }
 
