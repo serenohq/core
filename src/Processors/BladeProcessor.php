@@ -23,7 +23,7 @@ class BladeProcessor extends AbstractProcessor
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
         app()->line('Blade: '.$file->getRelativePathname().' -> '.$filename);
 
-        $data['currentViewPath'] = $path;
+        $data['currentViewPath'] = $file->getRelativePathname();
         $data['currentUrlPath'] = $this->getUrl($filename);
 
         $content = $this->viewFactory->file($file->getPathname(), $data)->render();
