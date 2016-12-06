@@ -80,7 +80,7 @@ class DeployCommand extends Command
 
         $filesystem = app(Filesystem::class);
         if ($clone->isSuccessful()) {
-            $filesystem->copyDirectory(root_dir('public'), root_dir($directory));
+            $filesystem->copyDirectory(config('sereno.public'), root_dir($directory));
 
             return;
         }
