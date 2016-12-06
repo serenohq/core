@@ -14,7 +14,7 @@
     <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License" />
   </a>
   <a href="https://packagist.org/packages/znck/core">
-    <img src="https://img.shields.io/packagist/v/znck/core.svg?style=flat-square" alt="Packagist" />
+    <img src="https://img.shields.io/packagist/v/sereno/core.svg?style=flat-square" alt="Packagist" />
   </a>
   <a href="https://github.com/serenohq/sereno-core/releases">
     <img src="https://img.shields.io/github/release/serenohq/core.svg?style=flat-square" alt="Latest Version" />
