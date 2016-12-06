@@ -135,10 +135,12 @@ class Application extends Container
             $configFile = $this->rootDirectory("sereno.${env}.yml");
         }
 
-        $this->line("Loading config file: <info>${configFile}</info>");
         if ($filesystem->exists($configFile)) {
+            $this->line("Loading config file: <info>${configFile}</info>");
             $configs = Yaml::parse($filesystem->get($configFile));
             $this->mergeConfig($configs);
+        } else {
+            $this->line("Config file not found: <error>${configFile}</error>");
         }
     }
 
@@ -318,18 +320,26 @@ class Application extends Container
             error_reporting(error_reporting() & ~E_NOTICE & ~E_WARNING);
         });
 
-        $directories = (array) config('sereno.views', []);
+        $directories = array_map(function ($name) {
+            return root_dir($name);
+        }, (array) config('sereno.views', []));
         foreach (array_reverse(config('sereno.extensions')) as $name) {
             $extension = $this->make($name);
 
             if ($extension instanceof Extension) {
-                $directories = array_merge($directories, $extension->getViewsDirectory());
+                foreach ($extension->getViewsDirectory() as $value) {
+                    array_push($directories, $value);
+                }
             }
         }
 
         array_push($directories, __DIR__.'/../resources/views');
 
         $directories = array_unique($directories);
+
+        foreach ($directories as $value) {
+            $this->line('View directory: '.realpath($value));
+        }
 
         $filesystem = $this->make(Filesystem::class);
         $finder = new FileViewFinder($filesystem, $directories);
