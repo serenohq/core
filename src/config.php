@@ -257,9 +257,7 @@
         | all the features offered by Sereno.
         |
         */
-        'extensions' => [
-            Sereno\DefaultExtension::class,
-        ],
+        'extensions' => [],
 
         /*
         |--------------------------------------------------------------------------
