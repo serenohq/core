@@ -7,10 +7,10 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Blade;
 use Sereno\Parsers\FrontParser;
 use Sereno\Parsers\Markdown;
+use Symfony\Component\Finder\SplFileInfo;
 
 class MarkdownProcessor extends AbstractProcessor
 {

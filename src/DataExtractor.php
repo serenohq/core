@@ -3,8 +3,8 @@
 namespace Sereno;
 
 use Illuminate\Support\Str;
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Extractor;
+use Symfony\Component\Finder\SplFileInfo;
 
 class DataExtractor
 {

@@ -1,9 +1,9 @@
 <?php namespace Sereno\Builders;
 
-use Symfony\Component\Finder\SplFileInfo;
 use Sereno\Contracts\Builder;
 use Sereno\ProcessorFactory;
 use Sereno\Traits\ViewFinderTrait;
+use Symfony\Component\Finder\SplFileInfo;
 
 class BlogBuilder implements Builder
 {

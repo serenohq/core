@@ -23,14 +23,13 @@ class InitCommand extends Command
         $filesystem = app(Filesystem::class);
         $filename = root_dir('sereno.yml');
 
-
-        if (!$force and $filesystem->exists($filename)) {
+        if (! $force and $filesystem->exists($filename)) {
             $output->writeln('<error>This is a sereno project. Use --force to re-create.</error>');
             exit(-1);
         }
 
         $serenoDir = root_dir('.sereno');
-        if (!$filesystem->exists($serenoDir)) {
+        if (! $filesystem->exists($serenoDir)) {
             $filesystem->makeDirectory($serenoDir);
         }
 
@@ -38,7 +37,7 @@ class InitCommand extends Command
         $filesystem->copy(__DIR__.'/../../resources/gulpfile.js', root_dir('.sereno/gulpfile.js'));
 
         $packageFile = root_dir('package.json');
-        if (!$force and $filesystem->exists($packageFile)) {
+        if (! $force and $filesystem->exists($packageFile)) {
             $output->writeln('<info>Add script to package.json:</info> "sereno": "gulp --gulpfile .sereno/gulpfile.js watch"');
             $output->writeln('<info>Run command:</info> yarn add --dev gulp laravel-elixir yargs bootstrap highlightjs jquery tether');
         } else {
@@ -49,7 +48,8 @@ class InitCommand extends Command
         $output->writeln('<info>Sereno project created.</info> Checkout sereno.yml');
     }
 
-    public function getConfigFileContent() {
+    public function getConfigFileContent()
+    {
         return <<<'EOF'
 siteName: My Serene Website
 siteDescription: My space on the internet - another Sereno website.
