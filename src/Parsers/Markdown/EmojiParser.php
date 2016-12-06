@@ -1,4 +1,4 @@
-<?php namespace Znck\Sereno\Parsers\Markdown;
+<?php namespace Sereno\Parsers\Markdown;
 
 use HeyUpdate\Emoji\Index\CompiledIndex;
 use League\CommonMark\Inline\Element\Image;

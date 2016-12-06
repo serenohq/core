@@ -1,4 +1,4 @@
-<?php namespace Znck\Sereno\Traits;
+<?php namespace Sereno\Traits;
 
 use Illuminate\View\Factory;
 use Symfony\Component\Finder\SplFileInfo;

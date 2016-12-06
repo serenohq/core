@@ -1,9 +1,9 @@
-<?php namespace Znck\Sereno\Builders;
+<?php namespace Sereno\Builders;
 
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Builder;
-use Znck\Sereno\DataExtractor;
-use Znck\Sereno\ProcessorFactory;
+use Sereno\Contracts\Builder;
+use Sereno\DataExtractor;
+use Sereno\ProcessorFactory;
 
 class BlogPostBuilder implements Builder
 {
@@ -31,14 +31,14 @@ class BlogPostBuilder implements Builder
     /**
      * Extracts front data.
      *
-     * @var \Znck\Sereno\DataExtractor
+     * @var \Sereno\DataExtractor
      */
     protected $extractor;
 
     /**
      * Converts to HTML page.
      *
-     * @var \Znck\Sereno\ProcessorFactory
+     * @var \Sereno\ProcessorFactory
      */
     protected $factory;
 

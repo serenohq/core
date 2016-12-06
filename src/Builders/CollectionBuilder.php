@@ -1,9 +1,9 @@
 <?php
 
-namespace Znck\Sereno\Builders;
+namespace Sereno\Builders;
 
-use Znck\Sereno\Contracts\Builder;
-use Znck\Sereno\ProcessorFactory;
+use Sereno\Contracts\Builder;
+use Sereno\ProcessorFactory;
 
 class CollectionBuilder implements Builder
 {
@@ -24,7 +24,7 @@ class CollectionBuilder implements Builder
     protected $blogUrl;
 
     /**
-     * @var \Znck\Sereno\ProcessorFactory
+     * @var \Sereno\ProcessorFactory
      */
     protected $processor;
 

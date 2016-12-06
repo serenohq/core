@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Processors;
+namespace Sereno\Processors;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Filesystem\Filesystem;
@@ -8,9 +8,9 @@ use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Blade;
-use Znck\Sereno\Parsers\FrontParser;
-use Znck\Sereno\Parsers\Markdown;
+use Sereno\Blade;
+use Sereno\Parsers\FrontParser;
+use Sereno\Parsers\Markdown;
 
 class MarkdownProcessor extends AbstractProcessor
 {

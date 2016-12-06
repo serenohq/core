@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Contracts;
+namespace Sereno\Contracts;
 
 use Symfony\Component\Finder\SplFileInfo;
 

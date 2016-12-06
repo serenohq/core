@@ -1,6 +1,6 @@
 {
-  "name": "znck/sereno-core",
-  "description": "A Static blog generator.",
+  "name": "sereno/core",
+  "description": "Core ",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -11,7 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Znck\\Sereno\\": "src/"
+      "Sereno\\": "src/"
     },
     "files": [
       "src/helpers.php"
@@ -19,7 +19,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Znck\\Test\\Sereno\\": "tests/"
+      "Test\\Sereno\\": "tests/"
     }
   },
   "require-dev": {

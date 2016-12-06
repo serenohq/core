@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Parsers\Markdown;
+namespace Sereno\Parsers\Markdown;
 
 use Highlight\Highlighter;
 use InvalidArgumentException;

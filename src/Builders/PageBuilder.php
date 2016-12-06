@@ -1,15 +1,15 @@
 <?php
 
-namespace Znck\Sereno\Builders;
+namespace Sereno\Builders;
 
-use Znck\Sereno\Contracts\Builder;
-use Znck\Sereno\ProcessorFactory;
-use Znck\Sereno\SiteGenerator;
+use Sereno\Contracts\Builder;
+use Sereno\ProcessorFactory;
+use Sereno\SiteGenerator;
 
 class PageBuilder implements Builder
 {
     /**
-     * @var \Znck\Sereno\ProcessorFactory
+     * @var \Sereno\ProcessorFactory
      */
     protected $factory;
 

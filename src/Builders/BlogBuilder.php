@@ -1,9 +1,9 @@
-<?php namespace Znck\Sereno\Builders;
+<?php namespace Sereno\Builders;
 
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Builder;
-use Znck\Sereno\ProcessorFactory;
-use Znck\Sereno\Traits\ViewFinderTrait;
+use Sereno\Contracts\Builder;
+use Sereno\ProcessorFactory;
+use Sereno\Traits\ViewFinderTrait;
 
 class BlogBuilder implements Builder
 {
@@ -31,7 +31,7 @@ class BlogBuilder implements Builder
     protected $page;
 
     /**
-     * @var \Znck\Sereno\ProcessorFactory
+     * @var \Sereno\ProcessorFactory
      */
     protected $processor;
 

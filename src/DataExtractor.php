@@ -1,10 +1,10 @@
 <?php
 
-namespace Znck\Sereno;
+namespace Sereno;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Extractor;
+use Sereno\Contracts\Extractor;
 
 class DataExtractor
 {

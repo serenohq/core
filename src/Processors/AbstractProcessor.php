@@ -1,12 +1,12 @@
 <?php
 
-namespace Znck\Sereno\Processors;
+namespace Sereno\Processors;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Processor;
+use Sereno\Contracts\Processor;
 
 abstract class AbstractProcessor implements Processor
 {

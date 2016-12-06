@@ -1,6 +1,6 @@
-<?php namespace Znck\Sereno;
+<?php namespace Sereno;
 
-use Znck\Sereno\Contracts\Extension;
+use Sereno\Contracts\Extension;
 
 abstract class AbstractExtension implements Extension
 {

@@ -1,4 +1,4 @@
-<?php namespace Znck\Sereno\Builders;
+<?php namespace Sereno\Builders;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Filesystem\Filesystem;
@@ -6,25 +6,25 @@ use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
 use Symfony\Component\Finder\SplFileInfo;
-use Znck\Sereno\Contracts\Builder;
-use Znck\Sereno\DataExtractor;
-use Znck\Sereno\Parsers\Markdown;
-use Znck\Sereno\ProcessorFactory;
+use Sereno\Contracts\Builder;
+use Sereno\DataExtractor;
+use Sereno\Parsers\Markdown;
+use Sereno\ProcessorFactory;
 
 class DocsBuilder implements Builder
 {
-    use \Znck\Sereno\Traits\ViewFinderTrait;
+    use \Sereno\Traits\ViewFinderTrait;
     /**
      * File processor generates HTML from source.
      *
-     * @var \Znck\Sereno\ProcessorFactory
+     * @var \Sereno\ProcessorFactory
      */
     protected $processor;
 
     /**
      * Data Extractor parses front data from a file.
      *
-     * @var \Znck\Sereno\DataExtractor
+     * @var \Sereno\DataExtractor
      */
     protected $extractor;
 
@@ -97,16 +97,21 @@ class DocsBuilder implements Builder
         ];
         $index = $this->compileWithBlade($index, $data);
 
+        $first = array_first($docs);
+        $landing = config('docs.default', array_first(explode('.', $first->getBasename(), 2)));
+
         foreach ($docs as $doc) {
+            if (starts_with($doc->getBasename(), $landing.'.')) {
+                $this->processor->process($doc, $data,
+                        [
+                            'interceptor' => function () {
+                                return trim($this->baseURL.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
+                            }
+                        ]);
+            }
+
             $this->processor->process($doc, $data + compact('index'), $options);
         }
-
-        $first = array_first($docs);
-        $path = config('docs.default', array_first(explode('.', $first->getBasename(), 2)));
-        $this->processor->process($this->getRedirectFile(), ['target' => url($this->baseURL).'/'.$path] + $data,
-                ['interceptor' => function () {
-                    return $this->baseURL.DIRECTORY_SEPARATOR.'index.html';
-                }]);
     }
 
     protected function getRedirectFile()

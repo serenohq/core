@@ -1,8 +1,8 @@
 <?php
 
-namespace Znck\Test\Lex\Parsers;
+namespace Test\Lex\Parsers;
 
-use Znck\Sereno\Parsers\FrontParser;
+use Sereno\Parsers\FrontParser;
 
 class FrontParserTest extends \PHPUnit_Framework_TestCase
 {

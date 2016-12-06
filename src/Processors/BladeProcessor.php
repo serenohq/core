@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Processors;
+namespace Sereno\Processors;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Factory;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Znck\Sereno\Commands;
+namespace Sereno\Commands;
 
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
