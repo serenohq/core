@@ -4,24 +4,24 @@
   <a href="https://styleci.io/repos/74711201">
     <img src="https://styleci.io/repos/74711201/shield" alt="StyleCI Status" />
   </a>
-  <a href="https://circleci.com/gh/serenohq/sereno-core">
-    <img src="https://circleci.com/gh/serenohq/sereno-core.svg?style=svg" alt="Build Status" />
+  <a href="https://circleci.com/gh/serenohq/core">
+    <img src="https://circleci.com/gh/serenohq/core.svg?style=svg" alt="Build Status" />
   </a>
-  <a href="https://coveralls.io/github/serenohq/sereno-core?branch=master">
-    <img src="https://coveralls.io/repos/github/serenohq/sereno-core/badge.svg?branch=master&style=flat-square" alt="Coverage Status" />
+  <a href="https://coveralls.io/github/serenohq/core?branch=master">
+    <img src="https://coveralls.io/repos/github/serenohq/core/badge.svg?branch=master&style=flat-square" alt="Coverage Status" />
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License" />
   </a>
-  <a href="https://packagist.org/packages/znck/sereno-core">
-    <img src="https://img.shields.io/packagist/v/znck/sereno-core.svg?style=flat-square" alt="Packagist" />
+  <a href="https://packagist.org/packages/znck/core">
+    <img src="https://img.shields.io/packagist/v/znck/core.svg?style=flat-square" alt="Packagist" />
   </a>
   <a href="https://github.com/serenohq/sereno-core/releases">
-    <img src="https://img.shields.io/github/release/serenohq/sereno-core.svg?style=flat-square" alt="Latest Version" />
+    <img src="https://img.shields.io/github/release/serenohq/core.svg?style=flat-square" alt="Latest Version" />
   </a>
 
-  <a href="https://github.com/serenohq/sereno-core/issues">
-    <img src="https://img.shields.io/github/issues/serenohq/sereno-core.svg?style=flat-square" alt="Issues" />
+  <a href="https://github.com/serenohq/core/issues">
+    <img src="https://img.shields.io/github/issues/serenohq/core.svg?style=flat-square" alt="Issues" />
   </a>
 </p>
 
