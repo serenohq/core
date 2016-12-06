@@ -86,7 +86,7 @@ class DeployCommand extends Command
         }
 
         $filesystem->makeDirectory(root_dir($directory));
-        $filesystem->copyDirectory(root_dir('public'), root_dir($directory));
+        $filesystem->copyDirectory(root_dir(config('sereno.public')), root_dir($directory));
 
         $init = new Process("git init; git checkout -b ${branch}; git remote add origin ${repository}");
         $init->setWorkingDirectory(root_dir($directory));
