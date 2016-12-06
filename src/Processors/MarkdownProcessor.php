@@ -48,9 +48,8 @@ class MarkdownProcessor extends AbstractProcessor
     protected function getContent(SplFileInfo $file, array $data, array $options): string
     {
         $this->frontParser->parse($file->getContents());
-        $markdown = $this->frontParser->getMainContent();
+        $viewContent = (string) $this->frontParser->getMainContent();
         $viewData = $this->frontParser->getFrontContent();
-        $viewContent = Markdown::parse((string) $markdown);
         $viewCache = $this->getCacheFile($file);
 
         $view = $this->buildView($viewContent, $viewData + $data, $options);
@@ -59,7 +58,9 @@ class MarkdownProcessor extends AbstractProcessor
             $this->filesystem->put($viewCache, $this->getCompiler()->compileString($view));
         }
 
-        return $this->engine->get($viewCache, $this->getViewData($viewData + $data));
+        $markdown = $this->engine->get($viewCache, $this->getViewData($viewData + $data));
+
+        return Markdown::parse($markdown);
     }
 
     protected function getViewData($data)
