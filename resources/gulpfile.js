@@ -13,11 +13,15 @@ elixir(function (mix) {
 
   mix.sass(['app.scss'])
       .browserify('app.js')
-      .exec('sereno build --dir="../" --env=' + env, [
-        'docs/*',
-        'docs/**/*',
-        '.sereno/resources/*',
-        '.sereno/resources/**/*',
+      .exec('sereno build --dir=.. --env=' + env, [
+        '../sereno.yml',
+        '../sereno.*.yml',
+        '../docs/*',
+        '../docs/**/*',
+        'content/*',
+        'content/**/*',
+        'resources/*',
+        'resources/**/*',
       ])
       .browserSync({
         server: {
