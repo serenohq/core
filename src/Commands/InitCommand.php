@@ -38,8 +38,12 @@ class InitCommand extends Command
 
         $packageFile = root_dir('package.json');
         if (! $force and $filesystem->exists($packageFile)) {
-            $output->writeln('<info>Add script to package.json:</info> "sereno": "gulp --gulpfile .sereno/gulpfile.js watch"');
-            $output->writeln('<info>Run command:</info> yarn add --dev gulp laravel-elixir yargs bootstrap highlightjs jquery tether');
+            $output->writeln('<info>Add script to package.json:</info>'.PHP_EOL.
+                             '   "sereno": "gulp --gulpfile .sereno/gulpfile.js watch",'.PHP_EOL.
+                             '   "sereno:build": "gulp --gulpfile .sereno/gulpfile.js",'.PHP_EOL.
+                             '   "sereno:deploy": "sereno deploy"');
+            $output->writeln('<info>Run command:</info>'.PHP_EOL.
+                             '   yarn add --dev gulp laravel-elixir yargs bootstrap highlightjs jquery tether');
         } else {
             $filesystem->copy(__DIR__.'/../../resources/package.json', $packageFile);
         }
@@ -51,24 +55,25 @@ class InitCommand extends Command
     public function getConfigFileContent()
     {
         return <<<'EOF'
-siteName: My Serene Website
-siteDescription: My space on the internet - another Sereno website.
+siteName: [Project Name]
+siteDescription: [Project Description]
 
 sereno:
     url: /
+    public: .sereno/public
     extensions:
-        - Sereno\Extensions\DocsExtension
+      - Sereno\Extensions\DocsExtension
     directory:
       - .sereno/content
     views:
-      - .sereno/resources/views
-blog:
-    directory: .sereno/blog
+      - .sereno/resources/views/
+    ignore:
+      - docs/README.md
 
 docs:
     directory: docs
-    url_prefix:
-    index: documentation
+    url_prefix: /
+    index: index
     extends: docs.base
     yields: doc_content
     default: installation
