@@ -32,7 +32,6 @@ class Markdown
             }
         }
 
-
         preg_match('/^( *)/', $firstLine, $matches);
 
         return preg_replace('/^[ ]{'.strlen($matches[1]).'}/m', '', $text);
