@@ -27,7 +27,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class Application extends Container
 {
-    const VERSION = '0.2.0';
+    const VERSION = '0.3';
 
     /**
      * @var \Symfony\Component\Console\Application
@@ -61,9 +61,11 @@ class Application extends Container
         $this->console
             ->getDefinition()
             ->addOptions([
-                             new InputOption('--env', '-e', InputOption::VALUE_OPTIONAL,
-                                             'The environment to operate in.', 'default'),
-                         ]);
+                 new InputOption('--env', '-e', InputOption::VALUE_OPTIONAL,
+                                 'The environment to operate in.', 'default'),
+                 new InputOption('--dir', '-d', InputOption::VALUE_OPTIONAL,
+                                 'Project root directory.', '.'),
+             ]);
 
         $dispatcher = new EventDispatcher();
         $this->instance(EventDispatcher::class, $dispatcher);
@@ -84,11 +86,20 @@ class Application extends Container
             return new Repository(require __DIR__.'/config.php');
         });
 
-        $this->loadConfigFileForEnv(null);
         $this->listen(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
+            $this->setRootDirectory($event->getInput()->getOption('dir'));
+
             $this->output = $event->getOutput();
             $this->setVerbosity($event->getOutput()->getVerbosity());
-            $this->loadConfigFileForEnv($event->getInput()->getOption('env'));
+            $env = $event->getInput()->getOption('env');
+            $this->loadConfigFileForEnv(null);
+            if ($env !== 'default') {
+                $this->loadConfigFileForEnv($env);
+            }
+            if (!$this->make(Filesystem::class)->exists(root_dir('sereno.yml'))) {
+                $this->output->writeln('<error>This is not as sereno project.</error>');
+                exit(-1);
+            }
             $this->bootApplication();
         });
     }
@@ -352,5 +363,9 @@ class Application extends Container
                 $repository->set($key, $value);
             }
         }
+    }
+
+    protected function setRootDirectory(string $dir) {
+        $this->rootDirectory = realpath($dir);
     }
 }

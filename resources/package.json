@@ -13,6 +13,7 @@
   },
   "scripts": {
     "sereno": "gulp --gulpfile .sereno/gulpfile.js watch",
-    "deploy": "sereno deploy"
+    "sereno:build": "gulp --gulpfile .sereno/gulpfile.js",
+    "sereno:deploy": "sereno deploy"
   }
 }
