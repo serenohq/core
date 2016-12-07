@@ -89,7 +89,8 @@ class SiteGenerator
             function (SplFileInfo $file) use (&$keys, $ignored) {
                 foreach ($ignored as $prefix) {
                     if (str_is(root_dir($prefix), $file->getRealPath())) {
-                        debug('  -> <error>Ignore:</error> '.$file->getRelativePathname(). ', <info>Rule:</info> '.$prefix);
+                        debug('  -> <error>Ignore:</error> '.$file->getRelativePathname().', <info>Rule:</info> '.$prefix);
+
                         return false;
                     }
                 }
