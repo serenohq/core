@@ -20,7 +20,8 @@ class MarkdownProcessor extends AbstractProcessor
     protected $viewFactory;
     protected $markConverter;
 
-    public function __construct(Filesystem $filesystem, Factory $viewFactory, FrontParser $frontParser) {
+    public function __construct(Filesystem $filesystem, Factory $viewFactory, FrontParser $frontParser)
+    {
         parent::__construct($filesystem);
 
         $this->viewFactory = $viewFactory;
@@ -28,7 +29,8 @@ class MarkdownProcessor extends AbstractProcessor
         $this->engine = new PhpEngine();
     }
 
-    public function process(SplFileInfo $file, array $data, array $options = []) {
+    public function process(SplFileInfo $file, array $data, array $options = [])
+    {
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
 
         $data['currentViewPath'] = $this->getPath($file);
@@ -43,7 +45,8 @@ class MarkdownProcessor extends AbstractProcessor
         return $this;
     }
 
-    protected function getContent(SplFileInfo $file, array $data, array $options): string {
+    protected function getContent(SplFileInfo $file, array $data, array $options): string
+    {
         $cache = $this->getCacheFile($file);
 
         if ($this->isExpired($cache, $file)) {
@@ -53,7 +56,8 @@ class MarkdownProcessor extends AbstractProcessor
         return $this->processString($file->getContents(), $data, $options, $cache);
     }
 
-    protected function getCacheFile($filename): string {
+    protected function getCacheFile($filename): string
+    {
         if ($filename instanceof SplFileInfo) {
             $filename = $filename->getRelativePathname();
         }
@@ -61,8 +65,9 @@ class MarkdownProcessor extends AbstractProcessor
         return cache_dir(sha1($filename).'.php');
     }
 
-    protected function isExpired(string $cache, SplFileInfo $file): bool {
-        if (!$this->filesystem->exists($cache)) {
+    protected function isExpired(string $cache, SplFileInfo $file): bool
+    {
+        if (! $this->filesystem->exists($cache)) {
             return true;
         }
 
@@ -71,7 +76,8 @@ class MarkdownProcessor extends AbstractProcessor
         return $lastModified >= $this->filesystem->lastModified($cache);
     }
 
-    public function processString(string $content, array $data, array $options = [], string $cache = null) {
+    public function processString(string $content, array $data, array $options = [], string $cache = null)
+    {
         $this->frontParser->parse($content);
 
         $markdown = $this->frontParser->getMainContent();
@@ -93,7 +99,8 @@ class MarkdownProcessor extends AbstractProcessor
         return $result;
     }
 
-    protected function buildView(string $viewContent, array $data, array $options): string {
+    protected function buildView(string $viewContent, array $data, array $options): string
+    {
         $extends = array_get($data, 'view.extends') ??
                    array_get($data, 'view::extends') ??
                    array_get($options, 'view.extends') ??
@@ -108,22 +115,25 @@ class MarkdownProcessor extends AbstractProcessor
                "@markdown\n${viewContent}\n@endmarkdown\n@stop";
     }
 
-    protected function compile(string $view, array $data, string $cache): string {
-        if (!$this->filesystem->exists($cache)) {
+    protected function compile(string $view, array $data, string $cache): string
+    {
+        if (! $this->filesystem->exists($cache)) {
             $this->filesystem->put($cache, $content = $this->getCompiler()->compileString($view));
         }
 
         return $this->engine->get($cache, $this->getViewData($data));
     }
 
-    protected function getCompiler(): BladeCompiler {
+    protected function getCompiler(): BladeCompiler
+    {
         /** @var Blade $blade */
         $blade = $this->viewFactory->getEngineResolver()->resolve('blade');
 
         return $blade->getCompiler();
     }
 
-    protected function getViewData($data) {
+    protected function getViewData($data)
+    {
         $data = array_merge($this->viewFactory->getShared(), $data);
 
         foreach ($data as $key => $value) {
