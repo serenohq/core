@@ -22,6 +22,10 @@ if (! function_exists('app')) {
 if (! function_exists('debug')) {
     function debug($any)
     {
+        if (is_array($any)) {
+            $any = print_r($any, true);
+        }
+
         app()->line((string) $any);
     }
 }

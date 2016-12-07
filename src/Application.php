@@ -61,12 +61,12 @@ class Application extends Container
     public function setPath(string $dir)
     {
         $this->path = rtrim($dir, DIRECTORY_SEPARATOR);
-        $this->line("Change path to: {$this->path}");
+        $this->line(" :: Change path to: {$this->path}");
     }
 
     public function configureApplication()
     {
-        $this->line('Configure application.');
+        $this->line(' :: Configure application.');
         $this->instance(Filesystem::class, new Filesystem());
         $this->instance(Repository::class, new Repository(require __DIR__.'/config.php'));
     }
@@ -97,15 +97,18 @@ class Application extends Container
 
     public function onConsoleCommand(ConsoleCommandEvent $event)
     {
-        $directory = $event->getInput()->getOption('dir');
-        if (is_string($directory)) {
+        $this->output = $event->getOutput();
+        $this->setVerbosity($this->output->getVerbosity());
+
+        debug('Boot Sereno...');
+
+        $directory = realpath($event->getInput()->getOption('dir'));
+        if (is_string($directory) and strlen($directory)) {
             $this->setPath($directory);
         }
 
-        $this->output = $event->getOutput();
         $env = $event->getInput()->getOption('env');
 
-        $this->setVerbosity($this->output->getVerbosity());
         $this->exitIfNotValidProject();
 
         $this->loadConfigFileForEnv(null);
@@ -163,11 +166,11 @@ class Application extends Container
         }
 
         if ($filesystem->exists($configFile)) {
-            $this->line("Loading config file: <info>${configFile}</info>");
+            debug(" :: Loading config file: <info>${configFile}</info>");
             $configs = (array) Yaml::parse($filesystem->get($configFile));
             $this->mergeConfig($configs);
         } else {
-            $this->line("Config file not found: <error>${configFile}</error>");
+            debug(" :: Config file not found: <error>${configFile}</error>");
         }
     }
 
@@ -179,7 +182,10 @@ class Application extends Container
         $this->registerProcessors();
         $this->registerExtractors();
         $this->registerBuilders();
-        $this->line('<info>Ready.</info>'.PHP_EOL);
+
+        debug('<info>Ready.</info>'.PHP_EOL);
+        debug('Prepare Services...');
+        debug('----------------------------');
     }
 
     public function rootDirectory(string $path = null) : string
@@ -206,19 +212,17 @@ class Application extends Container
     protected function configureContentsDirectory($directories = [])
     {
         $default = config('sereno.directory', []);
-
+        $default = config('sereno.directory', []);
         if (count($default) < 1) {
             $default = ['content'];
         }
-
         $others = array_merge($directories, [config('blog.directory'), config('docs.directory')]);
-
         $this->config()->set('sereno.directory', array_merge($default, $others));
     }
 
     protected function registerExtensions()
     {
-        $this->line('Boot extensions.');
+        $this->line(' :: Boot extensions.');
         $extensions = (array) config('sereno.extensions');
         array_unshift($extensions, DefaultExtension::class);
         $extensions = array_unique($extensions);
@@ -237,9 +241,9 @@ class Application extends Container
 
     protected function registerServices()
     {
-        $this->line('Boot services.');
+        $this->line(' :: Boot services.');
         $this->singleton(Factory::class, function () {
-            $this->line('Create view factory');
+            $this->line('     - Create view factory');
 
             return $this->createViewFactory();
         });
@@ -247,9 +251,9 @@ class Application extends Container
 
     private function registerProcessors()
     {
-        $this->line('Boot processors.');
+        $this->line(' :: Boot processors.');
         $this->singleton(ProcessorFactory::class, function () {
-            $this->line('Create processor factory');
+            $this->line('     - Create processor factory');
 
             $factory = new ProcessorFactory();
 
@@ -270,9 +274,9 @@ class Application extends Container
 
     protected function registerExtractors()
     {
-        $this->line('Boot extractors.');
+        $this->line(' :: Boot extractors.');
         $this->singleton(DataExtractor::class, function () {
-            $this->line('Create data extractor');
+            $this->line('     - Create data extractor');
 
             $factory = new DataExtractor();
             foreach (config('sereno.extensions') as $name) {
@@ -292,9 +296,9 @@ class Application extends Container
 
     protected function registerBuilders()
     {
-        $this->line('Boot builders.');
+        $this->line(' :: Boot builders.');
         $this->singleton(SiteGenerator::class, function () {
-            $this->line('Create site generator');
+            $this->line('     - Create site generator');
 
             $generator = new SiteGenerator($this, $this->make(Filesystem::class), $this->make(Factory::class));
 
@@ -359,7 +363,7 @@ class Application extends Container
         $directories = array_unique($directories);
 
         foreach ($directories as $value) {
-            $this->line('View directory: '.$value);
+            $this->line('     + View directory: '.$value);
         }
 
         $filesystem = $this->make(Filesystem::class);
@@ -373,7 +377,7 @@ class Application extends Container
         $cache = cache_dir();
         $filesystem = $this->make(Filesystem::class);
 
-        $this->line("Using cache: ${cache}");
+        $this->line("     - Using cache: ${cache}");
 
         if (! $filesystem->isDirectory($cache)) {
             $filesystem->makeDirectory($cache);

@@ -24,7 +24,7 @@ class SiteGenerator
 
     public function register(Builder $builder)
     {
-        $this->app->line('Builder: '.get_class($builder));
+        debug('     : Register Builder: '.get_class($builder));
         foreach ($builder->handledPatterns() as $pattern) {
             if (array_key_exists($pattern, $this->builders)) {
                 $this->builders[$pattern][] = $builder;
@@ -36,6 +36,8 @@ class SiteGenerator
 
     public function build()
     {
+        debug("\nSite Generator ::");
+        debug('-------------------------');
         $groups = $this->groupFiles($this->getAllFiles());
         $data = $this->buildData($groups);
 
@@ -67,6 +69,7 @@ class SiteGenerator
 
     protected function getAllFiles() : array
     {
+        debug('=> Search files...');
         $files = [];
         $dirs = config('sereno.directory');
 
@@ -85,16 +88,21 @@ class SiteGenerator
             $files,
             function (SplFileInfo $file) use (&$keys, $ignored) {
                 foreach ($ignored as $prefix) {
-                    if (starts_with($file->getRealPath(), root_dir($prefix))) {
+                    if (str_is(root_dir($prefix), $file->getRealPath())) {
+                        debug('  -> <error>Ignore:</error> '.$file->getRelativePathname().', <info>Rule:</info> '.$prefix);
+
                         return false;
                     }
                 }
 
                 if (! array_key_exists($file->getRealPath(), $keys)) {
                     $keys[$file->getRealPath()] = true;
+                    debug('  -> <info>Select:</info> '.$file->getRelativePathname());
 
                     return true;
                 }
+
+                debug('  -> <error>Duplicate:</error> '.$file->getRelativePathname());
 
                 return false;
             }
@@ -121,7 +129,7 @@ class SiteGenerator
     {
         foreach ($groups as $name => $files) {
             foreach ($this->builders[$name] as $builder) {
-                debug('=> <info>Build: '.$name.', Use: '.get_class($builder).'</info>');
+                debug(PHP_EOL.'=> Build: <question> '.$name.' </question> <info>Use: '.get_class($builder).'</info>');
                 /* @var Builder $builder */
                 $builder->build($files, $data);
             }

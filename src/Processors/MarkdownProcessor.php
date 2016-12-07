@@ -118,7 +118,7 @@ class MarkdownProcessor extends AbstractProcessor
     protected function compile(string $view, array $data, string $cache): string
     {
         if (! $this->filesystem->exists($cache)) {
-            $this->filesystem->put($cache, $this->getCompiler()->compileString($view));
+            $this->filesystem->put($cache, $content = $this->getCompiler()->compileString($view));
         }
 
         return $this->engine->get($cache, $this->getViewData($data));
