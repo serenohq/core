@@ -12,7 +12,7 @@ class FileProcessor extends AbstractProcessor
     {
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
 
-        app()->line('Copy: '.$file->getRelativePathname().' -> '.$filename);
+        debug('Copy: '.$file->getRelativePathname().' -> '.$filename);
 
         $this->writeContent($filename, $file->getContents());
     }

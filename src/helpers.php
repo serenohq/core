@@ -19,6 +19,13 @@ if (! function_exists('app')) {
     }
 }
 
+if (! function_exists('debug')) {
+    function debug($any)
+    {
+        app()->line((string) $any);
+    }
+}
+
 if (! function_exists('root_dir')) {
     function root_dir(string $path = null)
     {

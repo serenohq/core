@@ -1,10 +1,8 @@
 <?php
 
-namespace Test\Lex\Parsers;
-
 use Sereno\Parsers\FrontParser;
 
-class FrontParserTest extends \PHPUnit_Framework_TestCase
+class FrontParserTest extends TestCase
 {
     public function test_it_parses_correct_yml()
     {

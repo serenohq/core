@@ -9,7 +9,6 @@ use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
 use Sereno\Blade;
 use Sereno\Parsers\FrontParser;
-use Sereno\Parsers\Markdown;
 use Symfony\Component\Finder\SplFileInfo;
 
 class MarkdownProcessor extends AbstractProcessor
@@ -24,19 +23,20 @@ class MarkdownProcessor extends AbstractProcessor
     public function __construct(Filesystem $filesystem, Factory $viewFactory, FrontParser $frontParser)
     {
         parent::__construct($filesystem);
+
         $this->viewFactory = $viewFactory;
-        $this->engine = new PhpEngine();
         $this->frontParser = $frontParser;
+        $this->engine = new PhpEngine();
     }
 
     public function process(SplFileInfo $file, array $data, array $options = [])
     {
-        $path = $this->getPath($file);
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
-        app()->line('Markdown: '.$file->getRelativePathname().' -> '.$filename);
 
-        $data['currentViewPath'] = $path;
+        $data['currentViewPath'] = $this->getPath($file);
         $data['currentUrlPath'] = $this->getUrl($filename);
+
+        debug('Markdown: '.$file->getRelativePathname().' -> '.$filename);
 
         $content = $this->getContent($file, $data, $options);
 
@@ -47,59 +47,22 @@ class MarkdownProcessor extends AbstractProcessor
 
     protected function getContent(SplFileInfo $file, array $data, array $options): string
     {
-        $this->frontParser->parse($file->getContents());
-        $viewContent = (string) $this->frontParser->getMainContent();
-        $viewData = $this->frontParser->getFrontContent();
-        $viewCache = $this->getCacheFile($file);
+        $cache = $this->getCacheFile($file);
 
-        $view = $this->buildView($viewContent, $viewData + $data, $options);
-
-        if ($this->isExpired($viewCache, $file)) {
-            $this->filesystem->put($viewCache, $this->getCompiler()->compileString($view));
+        if ($this->isExpired($cache, $file)) {
+            $this->filesystem->delete($cache);
         }
 
-        $markdown = $this->engine->get($viewCache, $this->getViewData($viewData + $data));
-
-        return Markdown::parse($markdown);
+        return $this->processString($file->getContents(), $data, $options, $cache);
     }
 
-    protected function getViewData($data)
+    protected function getCacheFile($filename): string
     {
-        $data = array_merge($this->viewFactory->getShared(), $data);
-
-        foreach ($data as $key => $value) {
-            if ($value instanceof Renderable) {
-                $data[$key] = $value->render();
-            }
+        if ($filename instanceof SplFileInfo) {
+            $filename = $filename->getRelativePathname();
         }
 
-        return $data;
-    }
-
-    protected function buildView(string $viewContent, array $data, array $options): string
-    {
-        $sections = '';
-        foreach ($data as $key => $value) {
-            if (is_string($value)) {
-                $sections .= "@section('${key}', '".addslashes($value)."')\r\n";
-            }
-        }
-
-        $extends = array_get($data, 'view.extends') ??
-                   array_get($data, 'view::extends') ??
-                   array_get($options, 'view.extends') ??
-                   config('view.extends');
-        $yields = array_get($data, 'view.yields') ??
-                  array_get($data, 'view::yields') ??
-                  array_get($options, 'view.yields') ??
-                  config('view.yields');
-
-        return "@extends('${extends}')\r\n${sections}\r\n@section('${yields}')${viewContent}@stop";
-    }
-
-    protected function getCacheFile(SplFileInfo $file): string
-    {
-        return cache_dir(sha1($file->getRelativePathname()).'.php');
+        return cache_dir(sha1($filename).'.php');
     }
 
     protected function isExpired(string $cache, SplFileInfo $file): bool
@@ -113,11 +76,72 @@ class MarkdownProcessor extends AbstractProcessor
         return $lastModified >= $this->filesystem->lastModified($cache);
     }
 
+    public function processString(string $content, array $data, array $options = [], string $cache = null)
+    {
+        $this->frontParser->parse($content);
+
+        $markdown = $this->frontParser->getMainContent();
+        $viewData = $this->frontParser->getFrontContent();
+        $viewSource = $this->buildView($markdown, $viewData + $data, $options);
+
+        $removeCache = false;
+        if (is_null($cache)) {
+            $removeCache = true;
+            $cache = $this->getCacheFile(str_random());
+        }
+
+        $result = $this->compile($viewSource, $viewData + $data, $cache);
+
+        if ($removeCache) {
+            $this->filesystem->delete($cache);
+        }
+
+        return $result;
+    }
+
+    protected function buildView(string $viewContent, array $data, array $options): string
+    {
+        $extends = array_get($data, 'view.extends') ??
+                   array_get($data, 'view::extends') ??
+                   array_get($options, 'view.extends') ??
+                   config('view.extends');
+
+        $yields = array_get($data, 'view.yields') ??
+                  array_get($data, 'view::yields') ??
+                  array_get($options, 'view.yields') ??
+                  config('view.yields');
+
+        return "@extends('${extends}')\n@section('${yields}')\n".
+               "@markdown\n${viewContent}\n@endmarkdown\n@stop";
+    }
+
+    protected function compile(string $view, array $data, string $cache): string
+    {
+        if (! $this->filesystem->exists($cache)) {
+            $this->filesystem->put($cache, $this->getCompiler()->compileString($view));
+        }
+
+        return $this->engine->get($cache, $this->getViewData($data));
+    }
+
     protected function getCompiler(): BladeCompiler
     {
         /** @var Blade $blade */
         $blade = $this->viewFactory->getEngineResolver()->resolve('blade');
 
         return $blade->getCompiler();
+    }
+
+    protected function getViewData($data)
+    {
+        $data = array_merge($this->viewFactory->getShared(), $data);
+
+        foreach ($data as $key => $value) {
+            if ($value instanceof Renderable) {
+                $data[$key] = $value->render();
+            }
+        }
+
+        return $data;
     }
 }
