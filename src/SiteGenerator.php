@@ -121,7 +121,7 @@ class SiteGenerator
     {
         foreach ($groups as $name => $files) {
             foreach ($this->builders[$name] as $builder) {
-                app()->line('=> <info>Build: '.$name.', Use: '.get_class($builder).'</info>');
+                debug('=> <info>Build: '.$name.', Use: '.get_class($builder).'</info>');
                 /* @var Builder $builder */
                 $builder->build($files, $data);
             }

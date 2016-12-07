@@ -21,7 +21,7 @@ class BladeProcessor extends AbstractProcessor
     public function process(SplFileInfo $file, array $data, array $options = [])
     {
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
-        app()->line('Blade: '.$file->getRelativePathname().' -> '.$filename);
+        debug('Blade: '.$file->getRelativePathname().' -> '.$filename);
 
         $data['currentViewPath'] = $file->getRelativePathname();
         $data['currentUrlPath'] = $this->getUrl($filename);

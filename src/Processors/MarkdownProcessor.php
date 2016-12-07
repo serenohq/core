@@ -21,19 +21,23 @@ class MarkdownProcessor extends AbstractProcessor
     protected $viewFactory;
     protected $markConverter;
 
+    protected $currentFile;
+
     public function __construct(Filesystem $filesystem, Factory $viewFactory, FrontParser $frontParser)
     {
         parent::__construct($filesystem);
+
         $this->viewFactory = $viewFactory;
-        $this->engine = new PhpEngine();
         $this->frontParser = $frontParser;
+        $this->engine = new PhpEngine();
     }
 
     public function process(SplFileInfo $file, array $data, array $options = [])
     {
+        $this->currentFile = $file;
         $path = $this->getPath($file);
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
-        app()->line('Markdown: '.$file->getRelativePathname().' -> '.$filename);
+        debug('Markdown: '.$file->getRelativePathname().' -> '.$filename);
 
         $data['currentViewPath'] = $path;
         $data['currentUrlPath'] = $this->getUrl($filename);
@@ -58,9 +62,7 @@ class MarkdownProcessor extends AbstractProcessor
             $this->filesystem->put($viewCache, $this->getCompiler()->compileString($view));
         }
 
-        $markdown = $this->engine->get($viewCache, $this->getViewData($viewData + $data));
-
-        return Markdown::parse($markdown);
+        return $this->engine->get($viewCache, $this->getViewData($viewData + $data));
     }
 
     protected function getViewData($data)
@@ -89,12 +91,13 @@ class MarkdownProcessor extends AbstractProcessor
                    array_get($data, 'view::extends') ??
                    array_get($options, 'view.extends') ??
                    config('view.extends');
+
         $yields = array_get($data, 'view.yields') ??
                   array_get($data, 'view::yields') ??
                   array_get($options, 'view.yields') ??
                   config('view.yields');
 
-        return "@extends('${extends}')\r\n${sections}\r\n@section('${yields}')${viewContent}@stop";
+        return "@extends('${extends}')\n${sections}\n@section('${yields}')\n@markdown\n${viewContent}\n@endmarkdown\n@stop";
     }
 
     protected function getCacheFile(SplFileInfo $file): string
