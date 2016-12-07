@@ -40,7 +40,7 @@ class InitCommand extends Command
         if (! $force and $filesystem->exists($packageFile)) {
             $output->writeln('<info>Add script to package.json:</info>'.PHP_EOL.
                              '   "sereno": "gulp --gulpfile .sereno/gulpfile.js watch",'.PHP_EOL.
-                             '   "sereno:build": "gulp --gulpfile .sereno/gulpfile.js",'.PHP_EOL.
+                             '   "sereno:build": "gulp --gulpfile .sereno/gulpfile.js --env default",,'.PHP_EOL.
                              '   "sereno:deploy": "sereno deploy"');
             $output->writeln('<info>Run command:</info>'.PHP_EOL.
                              '   yarn add --dev gulp laravel-elixir yargs bootstrap highlightjs jquery tether');

@@ -4,7 +4,7 @@
     <div class="docs hidden-lg-up">
         <div class="sidebar">
             <h1>Documentation</h1>
-            {!! $index !!}
+            {!! $docs_index !!}
         </div>
     </div>
 @endsection
@@ -14,7 +14,7 @@
         <div class="docs-wrapper container">
             <div class="row">
                 <section class="sidebar col-lg-3 mt-1 mb-1 hidden-md-down">
-            		{!! $index !!}
+            		{!! $docs_index !!}
             	</section>
 
             	<article class="col-xs-12 col-lg-9">

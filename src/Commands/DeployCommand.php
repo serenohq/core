@@ -20,35 +20,40 @@ class DeployCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->build($output);
+
         $this->directory = $directory = 'deploy-'.time();
         $repository = config('github.repository') ?? $this->getRepository();
         $branch = config('github.branch') ?? $this->getBranch();
         $name = config('github.user.name') ?? 'Sereno Deployer';
         $email = config('github.user.email') ?? 'builtwith@sereno.in';
-
-        $this->build($output);
+        $message = ":rocket: Sereno Auto Deploy\n\n[ci skip] [skip ci]";
 
         $this->prepareRepository($directory, $repository, $branch);
 
         $commands = [
-            'git add -A'                                                                                               => null,
-            "git -c user.name='${name}' -c user.email='${email}' commit -m ':rocket: Sereno Auto Deploy\n\n[ci skip]'" => null,
-            "git push origin ${branch}"                                                                                => 'Uploading...',
+            'git add -A'                                                                 => 'Search for changes',
+            "git -c user.name='${name}' -c user.email='${email}' commit -m '${message}'" => 'Save changes',
+            "git push origin ${branch}"                                                  => 'Uploading',
         ];
 
         foreach ($commands as $command => $name) {
             $process = new Process($command);
             $process->setWorkingDirectory(root_dir($directory));
-            if (is_string($name)) {
-                $output->writeln($name);
-            }
+            debug('=> '.$name.': '.$command);
             $process->run();
-            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-                $output->writeln('=> '.$command);
-                $output->write($process->getOutput());
-            }
+
             if (! $process->isSuccessful()) {
+                if (strpos($process->getOutput(), 'nothing to commit') !== false) {
+                    $output->writeln('<info>Latest version is already deployed.</info>');
+                    $this->cleanup();
+                    exit(0);
+                }
+
                 $this->dd($output, $process);
+            }
+            if ($output->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
+                $output->writeln($name.'...');
             }
         }
 
@@ -58,7 +63,9 @@ class DeployCommand extends Command
 
     protected function getRepository()
     {
-        $process = new Process('git remote get-url --push origin');
+        $command = 'git remote get-url --push origin';
+        $process = new Process($command);
+        debug('=> Get Repository: '.$command);
         $process->run();
 
         return trim($process->getOutput());
@@ -66,7 +73,9 @@ class DeployCommand extends Command
 
     protected function getBranch()
     {
-        $process = new Process('git rev-parse --abbrev-ref HEAD');
+        $command = 'git rev-parse --abbrev-ref HEAD';
+        $process = new Process($command);
+        debug('=> Get Branch: '.$command);
         $process->run();
 
         return hash_equals('master', trim($process->getOutput())) ? 'gh-pages' : 'master';
@@ -74,22 +83,30 @@ class DeployCommand extends Command
 
     protected function prepareRepository(string $directory, string $repository, string $branch)
     {
-        $clone = new Process("git clone --depth=1 -b ${branch} ${repository} ${directory}");
+        $command = "git clone --depth=1 -b ${branch} ${repository} ${directory}";
+        $clone = new Process($command);
         $clone->setWorkingDirectory(root_dir());
+        debug('=> Clone Repository: '.$command);
         $clone->run();
+
+        $public = config('sereno.public');
 
         $filesystem = app(Filesystem::class);
         if ($clone->isSuccessful()) {
-            $filesystem->copyDirectory(config('sereno.public'), root_dir($directory));
+            $this->cleanOldBuild($directory);
+            $filesystem->copyDirectory($public, root_dir($directory));
 
             return;
         }
 
         $filesystem->makeDirectory(root_dir($directory));
-        $filesystem->copyDirectory(root_dir(config('sereno.public')), root_dir($directory));
+        $filesystem->copyDirectory(root_dir($public), root_dir($directory));
 
-        $init = new Process("git init; git checkout -b ${branch}; git remote add origin ${repository}");
+        debug('<error>Cloning failed.</error>');
+        $command = "git init; git checkout -b ${branch}; git remote add origin ${repository}";
+        $init = new Process($command);
         $init->setWorkingDirectory(root_dir($directory));
+        debug('=> Create new Repository: '.$command);
         $init->run();
     }
 
@@ -98,6 +115,22 @@ class DeployCommand extends Command
         $output->writeln('<error>There was some error.</error>'.PHP_EOL.$process->getErrorOutput());
         $this->cleanup();
         exit($process->getExitCode());
+    }
+
+    protected function cleanOldBuild($directory) {
+        $directory = root_dir($directory);
+
+        $filesystem = app(Filesystem::class);
+
+        foreach ($filesystem->allFiles($directory) as $file) {
+            $filesystem->delete($file);
+        }
+
+        foreach ($filesystem->directories($directory) as $file) {
+            if (!starts_with($file, '.git')) {
+                $filesystem->deleteDirectory($file);
+            }
+        }
     }
 
     protected function cleanup()
@@ -110,9 +143,12 @@ class DeployCommand extends Command
 
     protected function build(OutputInterface $output)
     {
-        $output->writeln('Building website...');
-        $gulp = new Process('npm run sereno:build');
         app(Filesystem::class)->cleanDirectory(cache_dir());
+
+        $output->writeln('Building website...');
+        $gulp = new Process('npm run sereno:build --env=default');
+        debug('=> Build Script: npm run sereno:build');
+
         $gulp->run();
         if (! $gulp->isSuccessful()) {
             $output->writeln('<error>Javascript dependencies not installed</error>');

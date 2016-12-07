@@ -95,25 +95,19 @@ class DocsBuilder implements Builder
             ],
             'interceptor' => [$this, 'getOutputFilename'],
         ];
-        $index = $this->compileWithBlade($index, $data);
+        $docs_index = $this->compileWithBlade($index, $data);
 
         $first = array_first($docs);
         $landing = config('docs.default', array_first(explode('.', $first->getBasename(), 2)));
 
         foreach ($docs as $doc) {
             if (starts_with($doc->getBasename(), $landing.'.')) {
-                $this->processor->process($doc, $data + compact('index'),
-                        [
-                            'view' => [
-                                'extends' => config('docs.extends'),
-                                'yields'  => config('docs.yields'),
-                            ],
-                            'interceptor' => function () {
-                                return trim($this->baseURL.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
-                            },
-                        ]);
+                $indexOptions = ['interceptor' => function () {
+                    return trim($this->baseURL.DIRECTORY_SEPARATOR.'index.html', DIRECTORY_SEPARATOR);
+                }] + $options;
+                $this->processor->process($doc, compact('docs_index') + $data, $indexOptions);
             }
-            $this->processor->process($doc, $data + compact('index'), $options);
+            $this->processor->process($doc, $data + compact('docs_index'), $options);
         }
     }
 
@@ -125,7 +119,7 @@ class DocsBuilder implements Builder
     protected function compileWithBlade(string $content, array $data): string
     {
         $viewCache = cache_dir(sha1($this->indexFilename).'.php');
-        $this->filesystem->put($viewCache, $this->getCompiler()->compileString("${content}"));
+        $this->filesystem->put($viewCache, $this->getCompiler()->compileString($content));
         $content = (new PhpEngine())->get($viewCache, $this->getViewData(['docs_url' => rtrim(url($this->baseURL), '/')] + $data));
 
         return Markdown::parse($content);
