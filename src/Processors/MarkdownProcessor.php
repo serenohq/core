@@ -9,7 +9,6 @@ use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\Factory;
 use Sereno\Blade;
 use Sereno\Parsers\FrontParser;
-use Sereno\Parsers\Markdown;
 use Symfony\Component\Finder\SplFileInfo;
 
 class MarkdownProcessor extends AbstractProcessor
@@ -21,10 +20,7 @@ class MarkdownProcessor extends AbstractProcessor
     protected $viewFactory;
     protected $markConverter;
 
-    protected $currentFile;
-
-    public function __construct(Filesystem $filesystem, Factory $viewFactory, FrontParser $frontParser)
-    {
+    public function __construct(Filesystem $filesystem, Factory $viewFactory, FrontParser $frontParser) {
         parent::__construct($filesystem);
 
         $this->viewFactory = $viewFactory;
@@ -32,15 +28,13 @@ class MarkdownProcessor extends AbstractProcessor
         $this->engine = new PhpEngine();
     }
 
-    public function process(SplFileInfo $file, array $data, array $options = [])
-    {
-        $this->currentFile = $file;
-        $path = $this->getPath($file);
+    public function process(SplFileInfo $file, array $data, array $options = []) {
         $filename = $this->getOutputFilename($file, array_get($options, 'interceptor'));
-        debug('Markdown: '.$file->getRelativePathname().' -> '.$filename);
 
-        $data['currentViewPath'] = $path;
+        $data['currentViewPath'] = $this->getPath($file);
         $data['currentUrlPath'] = $this->getUrl($filename);
+
+        debug('Markdown: '.$file->getRelativePathname().' -> '.$filename);
 
         $content = $this->getContent($file, $data, $options);
 
@@ -49,44 +43,57 @@ class MarkdownProcessor extends AbstractProcessor
         return $this;
     }
 
-    protected function getContent(SplFileInfo $file, array $data, array $options): string
-    {
-        $this->frontParser->parse($file->getContents());
-        $viewContent = (string) $this->frontParser->getMainContent();
+    protected function getContent(SplFileInfo $file, array $data, array $options): string {
+        $cache = $this->getCacheFile($file);
+
+        if ($this->isExpired($cache, $file)) {
+            $this->filesystem->delete($cache);
+        }
+
+        return $this->processString($file->getContents(), $data, $options, $cache);
+    }
+
+    protected function getCacheFile($filename): string {
+        if ($filename instanceof SplFileInfo) {
+            $filename = $filename->getRelativePathname();
+        }
+
+        return cache_dir(sha1($filename).'.php');
+    }
+
+    protected function isExpired(string $cache, SplFileInfo $file): bool {
+        if (!$this->filesystem->exists($cache)) {
+            return true;
+        }
+
+        $lastModified = $this->filesystem->lastModified($file->getPathname());
+
+        return $lastModified >= $this->filesystem->lastModified($cache);
+    }
+
+    public function processString(string $content, array $data, array $options = [], string $cache = null) {
+        $this->frontParser->parse($content);
+
+        $markdown = $this->frontParser->getMainContent();
         $viewData = $this->frontParser->getFrontContent();
-        $viewCache = $this->getCacheFile($file);
+        $viewSource = $this->buildView($markdown, $viewData + $data, $options);
 
-        $view = $this->buildView($viewContent, $viewData + $data, $options);
-
-        if ($this->isExpired($viewCache, $file)) {
-            $this->filesystem->put($viewCache, $this->getCompiler()->compileString($view));
+        $removeCache = false;
+        if (is_null($cache)) {
+            $removeCache = true;
+            $cache = $this->getCacheFile(str_random());
         }
 
-        return $this->engine->get($viewCache, $this->getViewData($viewData + $data));
+        $result = $this->compile($viewSource, $viewData + $data, $cache);
+
+        if ($removeCache) {
+            $this->filesystem->delete($cache);
+        }
+
+        return $result;
     }
 
-    protected function getViewData($data)
-    {
-        $data = array_merge($this->viewFactory->getShared(), $data);
-
-        foreach ($data as $key => $value) {
-            if ($value instanceof Renderable) {
-                $data[$key] = $value->render();
-            }
-        }
-
-        return $data;
-    }
-
-    protected function buildView(string $viewContent, array $data, array $options): string
-    {
-        $sections = '';
-        foreach ($data as $key => $value) {
-            if (is_string($value)) {
-                $sections .= "@section('${key}', '".addslashes($value)."')\r\n";
-            }
-        }
-
+    protected function buildView(string $viewContent, array $data, array $options): string {
         $extends = array_get($data, 'view.extends') ??
                    array_get($data, 'view::extends') ??
                    array_get($options, 'view.extends') ??
@@ -97,30 +104,34 @@ class MarkdownProcessor extends AbstractProcessor
                   array_get($options, 'view.yields') ??
                   config('view.yields');
 
-        return "@extends('${extends}')\n${sections}\n@section('${yields}')\n@markdown\n${viewContent}\n@endmarkdown\n@stop";
+        return "@extends('${extends}')\n@section('${yields}')\n".
+               "@markdown\n${viewContent}\n@endmarkdown\n@stop";
     }
 
-    protected function getCacheFile(SplFileInfo $file): string
-    {
-        return cache_dir(sha1($file->getRelativePathname()).'.php');
-    }
-
-    protected function isExpired(string $cache, SplFileInfo $file): bool
-    {
-        if (! $this->filesystem->exists($cache)) {
-            return true;
+    protected function compile(string $view, array $data, string $cache): string {
+        if (!$this->filesystem->exists($cache)) {
+            $this->filesystem->put($cache, $this->getCompiler()->compileString($view));
         }
 
-        $lastModified = $this->filesystem->lastModified($file->getPathname());
-
-        return $lastModified >= $this->filesystem->lastModified($cache);
+        return $this->engine->get($cache, $this->getViewData($data));
     }
 
-    protected function getCompiler(): BladeCompiler
-    {
+    protected function getCompiler(): BladeCompiler {
         /** @var Blade $blade */
         $blade = $this->viewFactory->getEngineResolver()->resolve('blade');
 
         return $blade->getCompiler();
+    }
+
+    protected function getViewData($data) {
+        $data = array_merge($this->viewFactory->getShared(), $data);
+
+        foreach ($data as $key => $value) {
+            if ($value instanceof Renderable) {
+                $data[$key] = $value->render();
+            }
+        }
+
+        return $data;
     }
 }

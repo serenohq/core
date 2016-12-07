@@ -87,6 +87,8 @@ abstract class AbstractProcessor implements Processor
                 return $extension;
             }
         }
+
+        return null;
     }
 
     protected function getUrl(string $filename): string

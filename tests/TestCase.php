@@ -1,9 +1,7 @@
 <?php
 
-use Mockery\Mock;
-use Sereno\Application;
-use Symfony\Component\Console\Output\OutputInterface;
 use Illuminate\Filesystem\Filesystem;
+use Sereno\Application;
 
 abstract class TestCase extends PHPUnit_Framework_TestCase
 {
@@ -17,7 +15,6 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         @mkdir(self::ROOT_DIRECTORY);
 
         $this->app = Application::getInstance();
-        $this->app->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         $this->app->setPath(self::ROOT_DIRECTORY);
         $this->app->configureApplication();
         $this->app->bootApplication();
