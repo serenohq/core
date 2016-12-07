@@ -45,7 +45,12 @@ class Application extends Container
      */
     protected $output;
 
+<<<<<<< HEAD
     public function start(string $directory) {
+=======
+    public function start(string $directory)
+    {
+>>>>>>> master
         $this->setPath($directory);
 
         $this->configureConsole();
@@ -57,6 +62,7 @@ class Application extends Container
         $this->console->run();
     }
 
+<<<<<<< HEAD
     public function setPath(string $dir) {
         $this->path = rtrim($dir, DIRECTORY_SEPARATOR);
         $this->line(" :: Change path to: {$this->path}");
@@ -69,6 +75,23 @@ class Application extends Container
     }
 
     public function configureConsole() {
+=======
+    public function setPath(string $dir)
+    {
+        $this->path = rtrim($dir, DIRECTORY_SEPARATOR);
+        $this->line("Change path to: {$this->path}");
+    }
+
+    public function configureApplication()
+    {
+        $this->line('Configure application.');
+        $this->instance(Filesystem::class, new Filesystem());
+        $this->instance(Repository::class, new Repository(require __DIR__.'/config.php'));
+    }
+
+    public function configureConsole()
+    {
+>>>>>>> master
         $this->console = new Console('Sereno', self::VERSION);
 
         $this->console
@@ -80,12 +103,17 @@ class Application extends Container
                                              'Project root directory.', null),
                          ]);
 
+<<<<<<< HEAD
         $this->instance(EventDispatcher::class, new EventDispatcher);
+=======
+        $this->instance(EventDispatcher::class, new EventDispatcher());
+>>>>>>> master
         $dispatcher = $this->make(EventDispatcher::class);
         $this->console->setDispatcher($dispatcher);
         $this->registerCommands();
     }
 
+<<<<<<< HEAD
     public function listen($event, $listener) {
         $this->make(EventDispatcher::class)->addListener($event, $listener);
     }
@@ -103,6 +131,24 @@ class Application extends Container
 
         $env = $event->getInput()->getOption('env');
 
+=======
+    public function listen($event, $listener)
+    {
+        $this->make(EventDispatcher::class)->addListener($event, $listener);
+    }
+
+    public function onConsoleCommand(ConsoleCommandEvent $event)
+    {
+        $directory = $event->getInput()->getOption('dir');
+        if (is_string($directory)) {
+            $this->setPath($directory);
+        }
+
+        $this->output = $event->getOutput();
+        $env = $event->getInput()->getOption('env');
+
+        $this->setVerbosity($this->output->getVerbosity());
+>>>>>>> master
         $this->exitIfNotValidProject();
 
         $this->loadConfigFileForEnv(null);
@@ -114,7 +160,12 @@ class Application extends Container
         $this->bootApplication();
     }
 
+<<<<<<< HEAD
     public function line(string $line) {
+=======
+    public function line(string $line)
+    {
+>>>>>>> master
         if ($this->verboseLevel >= OutputInterface::VERBOSITY_VERBOSE) {
             if ($this->output) {
                 $this->output->writeln($line);
@@ -134,12 +185,23 @@ class Application extends Container
                                     ]);
     }
 
+<<<<<<< HEAD
     public function setVerbosity($verbosity) {
         $this->verboseLevel = $verbosity;
     }
 
     protected function exitIfNotValidProject() {
         if (!$this->make(Filesystem::class)->exists($this->rootDirectory('sereno.yml'))) {
+=======
+    public function setVerbosity($verbosity)
+    {
+        $this->verboseLevel = $verbosity;
+    }
+
+    protected function exitIfNotValidProject()
+    {
+        if (! $this->make(Filesystem::class)->exists($this->rootDirectory('sereno.yml'))) {
+>>>>>>> master
             $this->output->writeln('<error>This is not as sereno project:</error> '.$this->path);
             exit(-1);
         }
@@ -155,7 +217,11 @@ class Application extends Container
         }
 
         if ($filesystem->exists($configFile)) {
+<<<<<<< HEAD
             debug(" :: Loading config file: <info>${configFile}</info>");
+=======
+            $this->line("Loading config file: <info>${configFile}</info>");
+>>>>>>> master
             $configs = (array) Yaml::parse($filesystem->get($configFile));
             $this->mergeConfig($configs);
         } else {
@@ -163,13 +229,19 @@ class Application extends Container
         }
     }
 
+<<<<<<< HEAD
     public function bootApplication() {
+=======
+    public function bootApplication()
+    {
+>>>>>>> master
         $this->configureContentsDirectory();
         $this->registerExtensions();
         $this->registerServices();
         $this->registerProcessors();
         $this->registerExtractors();
         $this->registerBuilders();
+<<<<<<< HEAD
         debug("<info>Ready.</info>".PHP_EOL);
         debug('Prepare Services...');
         debug('----------------------------');
@@ -196,6 +268,40 @@ class Application extends Container
 
     protected function configureContentsDirectory($directories = []) {
         $default = config('sereno.directory', []);
+=======
+        $this->line('<info>Ready.</info>'.PHP_EOL);
+    }
+
+    public function rootDirectory(string $path = null) : string
+    {
+        $s = DIRECTORY_SEPARATOR;
+>>>>>>> master
+
+        return $this->path.$s.trim((string) $path, $s);
+    }
+
+<<<<<<< HEAD
+    protected function registerExtensions() {
+        $this->line(' :: Boot extensions.');
+        $extensions = (array)config('sereno.extensions');
+=======
+    protected function mergeConfig(array $configs, string $prefix = '')
+    {
+        $repository = $this->config();
+
+        foreach ($configs as $name => $value) {
+            $key = $prefix.$name;
+            if (is_array($value) and array_values($value) !== $value) {
+                $this->mergeConfig($value, $name.'.');
+            } else {
+                $repository->set($key, $value);
+            }
+        }
+    }
+
+    protected function configureContentsDirectory($directories = [])
+    {
+        $default = config('sereno.directory', []);
 
         if (count($default) < 1) {
             $default = ['content'];
@@ -206,9 +312,11 @@ class Application extends Container
         $this->config()->set('sereno.directory', array_merge($default, $others));
     }
 
-    protected function registerExtensions() {
-        $this->line(' :: Boot extensions.');
-        $extensions = (array)config('sereno.extensions');
+    protected function registerExtensions()
+    {
+        $this->line('Boot extensions.');
+        $extensions = (array) config('sereno.extensions');
+>>>>>>> master
         array_unshift($extensions, DefaultExtension::class);
         $extensions = array_unique($extensions);
         $this->config()->set('sereno.extensions', $extensions);
@@ -299,11 +407,21 @@ class Application extends Container
         });
     }
 
+<<<<<<< HEAD
     public function config() : Repository {
         return $this->make(Repository::class);
     }
 
     protected function createViewFactory(): Factory {
+=======
+    public function config() : Repository
+    {
+        return $this->make(Repository::class);
+    }
+
+    protected function createViewFactory(): Factory
+    {
+>>>>>>> master
         $resolver = new EngineResolver();
 
         $compiler = $this->createBladeCompiler();
@@ -342,7 +460,11 @@ class Application extends Container
         $directories = array_unique($directories);
 
         foreach ($directories as $value) {
+<<<<<<< HEAD
             $this->line('     + View directory: '.$value);
+=======
+            $this->line('View directory: '.$value);
+>>>>>>> master
         }
 
         $filesystem = $this->make(Filesystem::class);
@@ -355,9 +477,15 @@ class Application extends Container
         $cache = cache_dir();
         $filesystem = $this->make(Filesystem::class);
 
+<<<<<<< HEAD
         $this->line("     - Using cache: ${cache}");
 
         if (!$filesystem->isDirectory($cache)) {
+=======
+        $this->line("Using cache: ${cache}");
+
+        if (! $filesystem->isDirectory($cache)) {
+>>>>>>> master
             $filesystem->makeDirectory($cache);
         }
 
@@ -366,7 +494,12 @@ class Application extends Container
         return $blade->getCompiler();
     }
 
+<<<<<<< HEAD
     protected function loadApplicationConfiguration(array $settings) {
+=======
+    protected function loadApplicationConfiguration(array $settings)
+    {
+>>>>>>> master
         $config = $this->config();
         foreach ($settings as $name => $setting) {
             if (is_array($original = $config->get('sereno.'.$name))) {
