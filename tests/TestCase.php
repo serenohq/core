@@ -11,7 +11,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
      */
     protected $app;
 
-    public function setUp() {
+    public function setUp()
+    {
         @mkdir(self::ROOT_DIRECTORY);
 
         $this->app = Application::getInstance();
@@ -20,20 +21,23 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         $this->app->bootApplication();
     }
 
-    protected function tearDown() {
+    protected function tearDown()
+    {
         $this->app->make(Filesystem::class)->deleteDirectory(self::ROOT_DIRECTORY);
     }
 
-
-    public function app($class, $args = []) {
+    public function app($class, $args = [])
+    {
         return $this->app->make($class, $args);
     }
 
-    public function filesystem(): Filesystem {
+    public function filesystem(): Filesystem
+    {
         return $this->app(Filesystem::class);
     }
 
-    public function getFile(string $content, string $name = 'foo') {
+    public function getFile(string $content, string $name = 'foo')
+    {
         $filename = self::ROOT_DIRECTORY.DIRECTORY_SEPARATOR.$name;
 
         $this->filesystem()->put($filename, $content);

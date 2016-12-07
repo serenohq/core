@@ -117,7 +117,8 @@ class DeployCommand extends Command
         exit($process->getExitCode());
     }
 
-    protected function cleanOldBuild($directory) {
+    protected function cleanOldBuild($directory)
+    {
         $directory = root_dir($directory);
 
         $filesystem = app(Filesystem::class);
@@ -127,7 +128,7 @@ class DeployCommand extends Command
         }
 
         foreach ($filesystem->directories($directory) as $file) {
-            if (!starts_with($file, '.git')) {
+            if (! starts_with($file, '.git')) {
                 $filesystem->deleteDirectory($file);
             }
         }
