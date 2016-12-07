@@ -4,7 +4,8 @@ use Sereno\Processors\MarkdownProcessor;
 
 class MarkdownProcessorTest extends TestCase
 {
-    public function test_it_processes_markdown() {
+    public function test_it_processes_markdown()
+    {
         $processor = $this->getProcessor();
 
         $content = '# Heading {{ $name }}';
@@ -15,7 +16,8 @@ class MarkdownProcessorTest extends TestCase
         $this->assertStringMatchesFormat($expected, $processed);
     }
 
-    public function test_variable_in_url() {
+    public function test_variable_in_url()
+    {
         $processor = $this->getProcessor();
 
         $content = '# Heading [{{ $name }}](/{{ $name }}/go)';
@@ -26,7 +28,8 @@ class MarkdownProcessorTest extends TestCase
         $this->assertStringMatchesFormat($expected, $processed);
     }
 
-    public function test_directive() {
+    public function test_directive()
+    {
         $processor = $this->getProcessor();
 
         $content = "# Heading [{{ \$name }}](/{{ \$name }}/go){.@active('/'.\$name.'/go')}";
@@ -37,7 +40,8 @@ class MarkdownProcessorTest extends TestCase
         $this->assertStringMatchesFormat($expected, $processed);
     }
 
-    protected function getProcessor(): MarkdownProcessor {
+    protected function getProcessor(): MarkdownProcessor
+    {
         return $this->app(MarkdownProcessor::class);
     }
 }
