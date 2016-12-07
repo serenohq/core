@@ -19,8 +19,9 @@ if (! function_exists('app')) {
     }
 }
 
-if (!function_exists('debug')) {
-    function debug($any) {
+if (! function_exists('debug')) {
+    function debug($any)
+    {
         app()->line((string) $any);
     }
 }
