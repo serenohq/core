@@ -212,8 +212,12 @@ class Application extends Container
     protected function configureContentsDirectory($directories = [])
     {
         $default = config('sereno.directory', []);
-
-        return $this->path.$s.trim((string) $path, $s);
+        $default = config('sereno.directory', []);
+        if (count($default) < 1) {
+            $default = ['content'];
+        }
+        $others = array_merge($directories, [config('blog.directory'), config('docs.directory')]);
+        $this->config()->set('sereno.directory', array_merge($default, $others));
     }
 
     protected function registerExtensions()
