@@ -58,6 +58,10 @@ class BlogBuilder implements Builder
         $pages = array_chunk(array_get($data, 'blog.posts', []), config('blog.postsPerPage', 10));
         $total_pages = count($pages);
 
+        $pinned = array_filter(array_get($data, 'blog.posts', []), function ($post) {
+            return data_get($post, 'pinned') === true;
+        });
+
         $options = [
             'interceptor' => [$this, 'getOutputFilename'],
         ];
@@ -68,6 +72,7 @@ class BlogBuilder implements Builder
             $this->page = $index + 1;
             $paginator = [
                 'posts'        => $this->preparePosts($posts),
+                'pinned'       => $pinned,
                 'current_page' => $this->page,
                 'prev_page'    => $this->page < $total_pages ? $this->page + 1 : null,
                 'next_page'    => $this->page > 1 ? $this->page - 1 : null,

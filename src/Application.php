@@ -109,7 +109,10 @@ class Application extends Container
 
         $env = $event->getInput()->getOption('env');
 
-        $this->exitIfNotValidProject();
+
+        if (!in_array(get_class($event->getCommand()), [Commands\InitCommand::class])) {
+            $this->exitIfNotValidProject();
+        }
 
         $this->loadConfigFileForEnv(null);
 
@@ -377,7 +380,8 @@ class Application extends Container
         $cache = cache_dir();
         $filesystem = $this->make(Filesystem::class);
 
-        $this->line("     - Using cache: ${cache}");
+        debug("     - Using cache: ${cache}");
+        debug("     - Public directory: ".public_dir());
 
         if (! $filesystem->isDirectory($cache)) {
             $filesystem->makeDirectory($cache);

@@ -23,6 +23,12 @@
 
                 @include('blog.paginator')
             </div>
+
+            <div class="col-xs-12 col-lg-4">
+                @include('blog.pinned')
+
+                @include('branding')
+            </div>
         </div>
     </div>
 

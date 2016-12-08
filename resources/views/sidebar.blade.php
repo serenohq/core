@@ -11,7 +11,6 @@
     </p>
 
     <footer class="mt-2 mb-1">
-        <hr style="margin-bottom: .5rem">
-        <small>Built with &hearts; by <a href="http://github.com/znck/sereno">Sereno</a></small>
+        @include('branding')
     </footer>
 @endif
