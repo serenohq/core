@@ -2,6 +2,7 @@
 
 @section('body')
     <div class="container py-2">
+        <h1 class="mb-2">Projects</h1>
         <div class="card-columns">
             @foreach ($projects as $project)
                 <div class="card">
@@ -26,5 +27,7 @@
                 </div>
             @endforeach
         </div>
+
+        @include('branding')
     </div>
 @endsection
