@@ -224,6 +224,12 @@
         'default' => 'installation',
     ],
 
+    'project' => [
+        'directory' => 'projects',
+
+        'url_prefix' => 'projects',
+    ],
+
     'sereno' => [
         'cache' => '_cache',
 

@@ -30,6 +30,10 @@
             <div class="col-xs-12 col-lg-8 offset-lg-2">
                 @include('blog.comment')
             </div>
+
+            <div class="col-xs-12 col-lg-8 offset-lg-2">
+                @include('branding')
+            </div>
         </div>
     </div>
 
