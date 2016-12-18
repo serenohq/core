@@ -31,7 +31,6 @@ class DeployCommand extends Command
         $date = date('d M, Y - H:i:s T');
         $message = ":rocket: Sereno Auto Deploy (${date})\n\n[ci skip] [skip ci]";
 
-
         $this->prepareRepository($directory, $repository, $branch);
 
         $commands = [
@@ -147,7 +146,6 @@ class DeployCommand extends Command
 
     protected function build(OutputInterface $output)
     {
-
         app(Filesystem::class)->deleteDirectory(cache_dir());
 
         $output->writeln('Building website...');
