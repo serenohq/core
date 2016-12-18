@@ -97,7 +97,7 @@ class SiteGenerator
 
                 if (! array_key_exists($file->getRealPath(), $keys)) {
                     $keys[$file->getRealPath()] = true;
-                    debug('  -> <info>Select:</info> '.$file->getRelativePathname());
+                    debug('  -> <info>Select:</info> '.str_replace(root_dir(), '', $file->getRealPath()));
 
                     return true;
                 }
