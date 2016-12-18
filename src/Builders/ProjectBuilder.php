@@ -2,8 +2,8 @@
 
 use Sereno\Contracts\Builder;
 use Sereno\DataExtractor;
-use Sereno\ProcessorFactory;
 use Sereno\Parsers\FrontParser;
+use Sereno\ProcessorFactory;
 use Symfony\Component\Finder\SplFileInfo;
 
 class ProjectBuilder implements Builder
