@@ -219,7 +219,7 @@ class Application extends Container
         if (count($default) < 1) {
             $default = ['content'];
         }
-        $others = array_merge($directories, [config('blog.directory'), config('docs.directory')]);
+        $others = array_merge($directories, [config('blog.directory'), config('docs.directory'), config('project.directory')]);
         $this->config()->set('sereno.directory', array_merge($default, $others));
     }
 
