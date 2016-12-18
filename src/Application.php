@@ -110,9 +110,11 @@ class Application extends Container
         $env = $event->getInput()->getOption('env');
 
 
+
         if (!in_array(get_class($event->getCommand()), [Commands\InitCommand::class])) {
             $this->exitIfNotValidProject();
         }
+
 
         $this->loadConfigFileForEnv(null);
 
@@ -219,7 +221,9 @@ class Application extends Container
         if (count($default) < 1) {
             $default = ['content'];
         }
+
         $others = array_merge($directories, [config('blog.directory'), config('docs.directory'), config('project.directory')]);
+
         $this->config()->set('sereno.directory', array_merge($default, $others));
     }
 
@@ -382,6 +386,7 @@ class Application extends Container
 
         debug("     - Using cache: ${cache}");
         debug("     - Public directory: ".public_dir());
+
 
         if (! $filesystem->isDirectory($cache)) {
             $filesystem->makeDirectory($cache);

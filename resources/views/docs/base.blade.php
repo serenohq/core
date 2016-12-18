@@ -15,8 +15,7 @@
             <div class="row">
                 <section class="sidebar col-lg-3 mt-1 mb-1 hidden-md-down">
             		{!! $docs_index !!}
-
-                    @include('branding')
+                @include('branding')
             	</section>
 
             	<article class="col-xs-12 col-lg-9">

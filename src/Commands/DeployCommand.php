@@ -27,8 +27,10 @@ class DeployCommand extends Command
         $branch = config('github.branch') ?? $this->getBranch();
         $name = config('github.user.name') ?? 'Sereno Deployer';
         $email = config('github.user.email') ?? 'builtwith@sereno.in';
+
         $date = date('d M, Y - H:i:s T');
         $message = ":rocket: Sereno Auto Deploy (${date})\n\n[ci skip] [skip ci]";
+
 
         $this->prepareRepository($directory, $repository, $branch);
 
@@ -145,6 +147,7 @@ class DeployCommand extends Command
 
     protected function build(OutputInterface $output)
     {
+
         app(Filesystem::class)->deleteDirectory(cache_dir());
 
         $output->writeln('Building website...');
