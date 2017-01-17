@@ -42,7 +42,7 @@ abstract class AbstractProcessor implements Processor
         return $this->allowedExtensions;
     }
 
-    protected function getOutputFilename(SplFileInfo $file, callable $interceptor = null): string
+    public function getOutputFilename(SplFileInfo $file, callable $interceptor = null): string
     {
         if (is_callable($interceptor)) {
             return call_user_func($interceptor, $file);
@@ -67,7 +67,7 @@ abstract class AbstractProcessor implements Processor
         return $file->getRelativePath().DIRECTORY_SEPARATOR.$basename.DIRECTORY_SEPARATOR.$this->outputIndexName;
     }
 
-    protected function getPath(SplFileInfo $file): string
+    public function getPath(SplFileInfo $file): string
     {
         $extension = $this->getOutputFileExtension($file);
 
@@ -78,7 +78,7 @@ abstract class AbstractProcessor implements Processor
         return str_replace_last($extension, '', $file->getRelativePathname());
     }
 
-    protected function getOutputFileExtension(SplFileInfo $file)
+    public function getOutputFileExtension(SplFileInfo $file)
     {
         $filename = $file->getBasename();
 
@@ -91,7 +91,7 @@ abstract class AbstractProcessor implements Processor
         return null;
     }
 
-    protected function getUrl(string $filename): string
+    public function getUrl(string $filename): string
     {
         $filename = str_replace(public_dir(), '', $filename);
         $filename = str_replace_last($this->outputIndexName, '', $filename);
@@ -100,7 +100,7 @@ abstract class AbstractProcessor implements Processor
         return $filename;
     }
 
-    protected function writeContent(string $filename, $content)
+    public function writeContent(string $filename, $content)
     {
         $filename = $this->normalizeFilename($filename);
         $this->prepareOutputFiles($filename);

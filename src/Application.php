@@ -23,7 +23,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class Application extends Container
 {
-    const VERSION = '0.3';
+    const VERSION = '0.3 - DEV';
+
+    use Traits\RegisterExtensionsTrait;
 
     /**
      * @var Console
@@ -61,12 +63,12 @@ class Application extends Container
     public function setPath(string $dir)
     {
         $this->path = rtrim($dir, DIRECTORY_SEPARATOR);
-        $this->line(" :: Change path to: {$this->path}");
+        $this->verbose(" :: Change path to: {$this->path}");
     }
 
     public function configureApplication()
     {
-        $this->line(' :: Configure application.');
+        $this->verbose(' :: Configure application.');
         $this->instance(Filesystem::class, new Filesystem());
         $this->instance(Repository::class, new Repository(require __DIR__.'/config.php'));
     }
@@ -100,7 +102,9 @@ class Application extends Container
         $this->output = $event->getOutput();
         $this->setVerbosity($this->output->getVerbosity());
 
-        debug('Boot Sereno...');
+        $this->console('<info>Sereno</info> '.static::VERSION);
+
+        $this->verbose('Boot Sereno...');
 
         $directory = realpath($event->getInput()->getOption('dir'));
         if (is_string($directory) and strlen($directory)) {
@@ -109,12 +113,12 @@ class Application extends Container
 
         $env = $event->getInput()->getOption('env');
 
-
-
-        if (!in_array(get_class($event->getCommand()), [Commands\InitCommand::class])) {
+        if (!in_array(get_class($event->getCommand()), [
+            Commands\InitCommand::class,
+            \Symfony\Component\Console\Command\ListCommand::class,
+        ])) {
             $this->exitIfNotValidProject();
         }
-
 
         $this->loadConfigFileForEnv(null);
 
@@ -125,14 +129,26 @@ class Application extends Container
         $this->bootApplication();
     }
 
+    public function console(string $line)
+    {
+        if ($this->output) {
+            $this->output->writeln($line);
+        } else {
+            print_r($line.PHP_EOL);
+        }
+    }
+
     public function line(string $line)
     {
         if ($this->verboseLevel >= OutputInterface::VERBOSITY_VERBOSE) {
-            if ($this->output) {
-                $this->output->writeln($line);
-            } else {
-                print_r($line.PHP_EOL);
-            }
+            $this->console($line);
+        }
+    }
+
+    public function verbose(string $line)
+    {
+        if ($this->verboseLevel >= OutputInterface::VERBOSITY_DEBUG) {
+            $this->line($line);
         }
     }
 
@@ -171,26 +187,26 @@ class Application extends Container
         }
 
         if ($filesystem->exists($configFile)) {
-            debug(" :: Loading config file: <info>${configFile}</info>");
-            $configs = (array) Yaml::parse($filesystem->get($configFile));
+            $this->verbose(" :: Loading config file: <info>${configFile}</info>");
+            $configs = (array) Yaml::parse($filesystem->get($configFile), Yaml::PARSE_OBJECT);
             $this->mergeConfig($configs);
         } else {
-            debug(" :: Config file not found: <error>${configFile}</error>");
+            $this->verbose(" :: Config file not found: <error>${configFile}</error>");
         }
     }
 
     public function bootApplication()
     {
-        $this->configureContentsDirectory();
-        $this->registerExtensions();
-        $this->registerServices();
-        $this->registerProcessors();
-        $this->registerExtractors();
-        $this->registerBuilders();
+        $this->bootExtensions();
+        $this->configureContentsDirectory($this->getContentDirectory());
+        $this->bootServices();
+        $this->bootProcessors();
+        $this->bootExtractors();
+        $this->bootBuilders();
 
-        debug('<info>Ready.</info>'.PHP_EOL);
-        debug('Prepare Services...');
-        debug('----------------------------');
+        $this->verbose('<info>Ready.</info>'.PHP_EOL);
+        $this->verbose('Prepare Services...');
+        $this->verbose('----------------------------');
     }
 
     public function rootDirectory(string $path = null) : string
@@ -216,109 +232,86 @@ class Application extends Container
 
     protected function configureContentsDirectory($directories = [])
     {
-        $default = config('sereno.directory', []);
-        $default = config('sereno.directory', []);
-        if (count($default) < 1) {
-            $default = ['content'];
-        }
+        $default = (array) config('sereno.directory', []);
 
-        $others = array_merge($directories, [config('blog.directory'), config('docs.directory'), config('project.directory')]);
-
-        $this->config()->set('sereno.directory', array_merge($default, $others));
+        $this->config()->set('sereno.directory', array_merge($default, $directories));
     }
 
-    protected function registerExtensions()
+    protected function bootExtensions()
     {
-        $this->line(' :: Boot extensions.');
+        $this->verbose(' :: Boot extensions.');
         $extensions = (array) config('sereno.extensions');
+
         array_unshift($extensions, DefaultExtension::class);
-        $extensions = array_unique($extensions);
-        $this->config()->set('sereno.extensions', $extensions);
 
-        foreach ($extensions as $name) {
-            $extension = $this->make($name);
+        foreach (array_unique($extensions) as $name) {
+            $extension = $this->make($this->normalizeExtension($name));
 
-            $this->instance($name, $extension);
-
-            if (method_exists($extension, 'boot')) {
-                $extension->boot();
-            }
+            $extension->boot($this);
         }
     }
 
-    protected function registerServices()
+    protected function normalizeExtension(string $name): string
     {
-        $this->line(' :: Boot services.');
+        if (str_contains($name, '\\')) return $name;
+
+        return 'Sereno\\Extensions\\'.$name;
+    }
+
+    protected function bootServices()
+    {
+        $this->verbose(' :: Boot services.');
         $this->singleton(Factory::class, function () {
-            $this->line('     - Create view factory');
+            $this->verbose('     - Create view factory');
 
             return $this->createViewFactory();
         });
     }
 
-    private function registerProcessors()
+    private function bootProcessors()
     {
-        $this->line(' :: Boot processors.');
+        $this->verbose(' :: Boot processors.');
         $this->singleton(ProcessorFactory::class, function () {
-            $this->line('     - Create processor factory');
+            $this->verbose('     - Create processor factory');
 
             $factory = new ProcessorFactory();
 
-            foreach (config('sereno.extensions') as $name) {
-                $extension = $this->make($name);
-
-                if ($extension instanceof Extension) {
-                    foreach ($extension->getProcessors() as $processor) {
-                        $processor = is_string($processor) ? $this->make($processor) : $processor;
-                        $factory->register($processor);
-                    }
-                }
+            foreach ($this->getProcessors() as $processor) {
+                $this->verbose('        + Processor: '.$processor);
+                $factory->register($this->make($processor));
             }
 
             return $factory;
         });
     }
 
-    protected function registerExtractors()
+    protected function bootExtractors()
     {
-        $this->line(' :: Boot extractors.');
+        $this->verbose(' :: Boot extractors.');
         $this->singleton(DataExtractor::class, function () {
-            $this->line('     - Create data extractor');
+            $this->verbose('     - Create data extractor');
 
             $factory = new DataExtractor();
-            foreach (config('sereno.extensions') as $name) {
-                $extension = $this->make($name);
 
-                if ($extension instanceof Extension) {
-                    foreach ($extension->getExtractors() as $extractor) {
-                        $extractor = is_string($extractor) ? $this->make($extractor) : $extractor;
-                        $factory->register($extractor);
-                    }
-                }
+            foreach ($this->getExtractors() as $extractor) {
+                $this->verbose('        + Extractor: '.$extractor);
+                $factory->register($this->make($extractor));
             }
 
             return $factory;
         });
     }
 
-    protected function registerBuilders()
+    protected function bootBuilders()
     {
-        $this->line(' :: Boot builders.');
+        $this->verbose(' :: Boot builders.');
         $this->singleton(SiteGenerator::class, function () {
-            $this->line('     - Create site generator');
+            $this->verbose('     - Create site generator');
 
             $generator = new SiteGenerator($this, $this->make(Filesystem::class), $this->make(Factory::class));
 
-            foreach (config('sereno.extensions') as $name) {
-                $extension = $this->make($name);
-
-                if ($extension instanceof Extension) {
-                    foreach ($extension->getBuilders() as $builder) {
-                        $builder = is_string($builder) ? $this->make($builder) : $builder;
-
-                        $generator->register($builder);
-                    }
-                }
+            foreach ($this->getBuilders() as $builder) {
+                $generator->register($this->make($builder));
             }
 
             return $generator;
@@ -355,22 +348,17 @@ class Application extends Container
             return root_dir($name);
         }, (array) config('sereno.views'));
 
-        foreach (array_reverse(config('sereno.extensions')) as $name) {
-            $extension = $this->make($name);
-
-            if ($extension instanceof Extension) {
-                foreach ($extension->getViewsDirectory() as $value) {
-                    array_push($directories, $value);
-                }
-            }
+        foreach ($this->getViewsDirectory() as $value) {
+            array_push($directories, $value);
         }
 
         array_push($directories, dirname(__DIR__).'/resources/views');
 
         $directories = array_unique($directories);
 
+        $this->verbose('     - View directories');
         foreach ($directories as $value) {
-            $this->line('     + View directory: '.$value);
+            $this->verbose('        + '.$value);
         }
 
         $filesystem = $this->make(Filesystem::class);
@@ -384,8 +372,8 @@ class Application extends Container
         $cache = cache_dir();
         $filesystem = $this->make(Filesystem::class);
 
-        debug("     - Using cache: ${cache}");
-        debug("     - Public directory: ".public_dir());
+        $this->verbose("        + Using cache: ${cache}");
+        $this->verbose("        + Public directory: ".public_dir());
 
 
         if (! $filesystem->isDirectory($cache)) {

@@ -24,7 +24,7 @@ class SiteGenerator
 
     public function register(Builder $builder)
     {
-        debug('     : Register Builder: '.get_class($builder));
+        $this->app->verbose('     | Register Builder: '.get_class($builder));
         foreach ($builder->handledPatterns() as $pattern) {
             if (array_key_exists($pattern, $this->builders)) {
                 $this->builders[$pattern][] = $builder;
@@ -77,7 +77,11 @@ class SiteGenerator
             $path = root_dir($dir);
 
             if ($this->filesystem->exists($path)) {
-                $files = array_merge($files, $this->filesystem->allFiles($path));
+                if ($this->filesystem->isDirectory($path)) {
+                    $files = array_merge($files, $this->filesystem->allFiles($path));
+                } else {
+                    $files = array_merge($files, [new SplFileInfo($path, root_dir(), str_replace(root_dir(), '', $path))]);
+                }
             }
         }
 
@@ -97,7 +101,7 @@ class SiteGenerator
 
                 if (! array_key_exists($file->getRealPath(), $keys)) {
                     $keys[$file->getRealPath()] = true;
-                    debug('  -> <info>Select:</info> '.$file->getRelativePathname());
+                    debug('  -> <info>Select:</info> '.str_replace(root_dir(), '', $file->getRealPath()));
 
                     return true;
                 }

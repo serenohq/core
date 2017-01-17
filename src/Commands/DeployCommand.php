@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Console\Input\ArrayInput;
 
 class DeployCommand extends Command
 {
@@ -151,14 +152,17 @@ class DeployCommand extends Command
         app(Filesystem::class)->deleteDirectory(cache_dir());
 
         $output->writeln('Building website...');
-        $gulp = new Process('npm run sereno:build --env=default');
-        debug('=> Build Script: npm run sereno:build');
+        $gulp = new Process('npm run sereno:predeploy -- --env=default');
+        debug('=> Build Script: npm run sereno:predeploy');
 
         $gulp->run();
-        if (! $gulp->isSuccessful()) {
-            $output->writeln('<error>Javascript dependencies not installed</error>');
-            $output->writeln('Run <info>yarn</info> or <info>npm install</info>');
-            exit($gulp->getExitCode());
+
+        $command = $this->getApplication()->find('build');
+        $returnCode = $command->run(new ArrayInput([]), $output);
+
+        if ($returnCode !== 0) {
+            $output->writeln('Build failed.');
+            exit($returnCode);
         }
     }
 }
