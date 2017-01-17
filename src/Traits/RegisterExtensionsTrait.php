@@ -2,7 +2,8 @@
 
 namespace Sereno\Traits;
 
-trait RegisterExtensionsTrait {
+trait RegisterExtensionsTrait
+{
     protected $processors = [];
 
     public function registerProcessors(array $processors)
