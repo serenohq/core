@@ -4,10 +4,10 @@ namespace Sereno\Commands;
 
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Console\Input\ArrayInput;
 
 class DeployCommand extends Command
 {
@@ -31,7 +31,6 @@ class DeployCommand extends Command
 
         $date = date('d M, Y - H:i:s T');
         $message = ":rocket: Sereno Auto Deploy (${date})\n\n[ci skip] [skip ci]";
-
 
         $this->prepareRepository($directory, $repository, $branch);
 
@@ -148,7 +147,6 @@ class DeployCommand extends Command
 
     protected function build(OutputInterface $output)
     {
-
         app(Filesystem::class)->deleteDirectory(cache_dir());
 
         $output->writeln('Building website...');
