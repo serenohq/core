@@ -25,9 +25,13 @@ class PageBuilder implements Builder
 
     public function data(array $files, array $data) : array
     {
-        return $data + array_filter(config()->all(), function ($value) {
-            return ! is_array($value);
-        });
+        foreach (config()->all() as $key => $value) {
+            if (!isset($data[$key])) {
+                $data[$key] = config($key);
+            }
+        }
+
+        return $data;
     }
 
     public function build(array $files, array $data)
