@@ -10,7 +10,6 @@ use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
-use Sereno\Contracts\Extension;
 use Sereno\Extensions\DefaultExtension;
 use Symfony\Component\Console\Application as Console;
 use Symfony\Component\Console\ConsoleEvents;
@@ -113,7 +112,7 @@ class Application extends Container
 
         $env = $event->getInput()->getOption('env');
 
-        if (!in_array(get_class($event->getCommand()), [
+        if (! in_array(get_class($event->getCommand()), [
             Commands\InitCommand::class,
             \Symfony\Component\Console\Command\ListCommand::class,
         ])) {
@@ -253,7 +252,9 @@ class Application extends Container
 
     protected function normalizeExtension(string $name): string
     {
-        if (str_contains($name, '\\')) return $name;
+        if (str_contains($name, '\\')) {
+            return $name;
+        }
 
         return 'Sereno\\Extensions\\'.$name;
     }
@@ -373,8 +374,7 @@ class Application extends Container
         $filesystem = $this->make(Filesystem::class);
 
         $this->verbose("        + Using cache: ${cache}");
-        $this->verbose("        + Public directory: ".public_dir());
-
+        $this->verbose('        + Public directory: '.public_dir());
 
         if (! $filesystem->isDirectory($cache)) {
             $filesystem->makeDirectory($cache);

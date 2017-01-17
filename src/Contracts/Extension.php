@@ -1,4 +1,5 @@
 <?php namespace Sereno\Contracts;
+
 use Sereno\Application;
 
 interface Extension
