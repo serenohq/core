@@ -103,13 +103,11 @@ class MarkdownProcessor extends AbstractProcessor
     {
         $extends = array_get($data, 'view.extends') ??
                    array_get($data, 'view::extends') ??
-                   array_get($options, 'view.extends') ??
-                   config('view.extends');
+                   array_get($options, 'view.extends') ?? config('sereno.markdown.extends');
 
         $yields = array_get($data, 'view.yields') ??
                   array_get($data, 'view::yields') ??
-                  array_get($options, 'view.yields') ??
-                  config('view.yields');
+                  array_get($options, 'view.yields') ?? config('sereno.markdown.yields');
 
         return "@extends('${extends}')\n@section('${yields}')\n".
                "@markdown\n${viewContent}\n@endmarkdown\n@stop";

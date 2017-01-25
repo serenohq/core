@@ -75,21 +75,6 @@
         // ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Markdown Configuration for Website
-    |--------------------------------------------------------------------------
-    |
-    | The `extends` value sets the parent blade component for the markdown
-    | renderer. And `yields` value places the content in the designated
-    | place on the parent blade component.
-    |
-    */
-    'view' => [
-        'extends' => 'markdown',
-        'yields'  => 'markdown-body',
-    ],
-
     'sereno' => [
         'cache' => '_cache',
 
@@ -172,5 +157,20 @@
         |
         */
         'ignore' => [],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Markdown Configuration for Website
+        |--------------------------------------------------------------------------
+        |
+        | The `extends` value sets the parent blade component for the markdown
+        | renderer. And `yields` value places the content in the designated
+        | place on the parent blade component.
+        |
+        */
+        'markdown' => [
+            'extends' => 'markdown',
+            'yields'  => 'markdown-body',
+        ],
     ],
 ];
