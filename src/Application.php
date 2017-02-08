@@ -5,6 +5,8 @@ namespace Sereno;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Translation\FileLoader;
+use Illuminate\Translation\Translator;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
@@ -262,6 +264,24 @@ class Application extends Container
     protected function bootServices()
     {
         $this->verbose(' :: Boot services.');
+        $this->singleton('translation.loader', function () {
+            $this->verbose('     - Create translation loader');
+
+            return new FileLoader($this->make(Filesystem::class), config('sereno.translation.dir'));
+        });
+        $this->singleton('translator', function ($app) {
+            $this->verbose('     - Create translator');
+
+            $loader = $app['translation.loader'];
+            $locale = config('sereno.translation.locale');
+            $fallback = config('sereno.translation.fallback_locale');
+
+            $trans = new Translator($loader, $locale);
+
+            $trans->setFallback($fallback);
+
+            return $trans;
+        });
         $this->singleton(Factory::class, function () {
             $this->verbose('     - Create view factory');
 
