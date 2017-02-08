@@ -12,8 +12,8 @@
     "tether": "^1.3.7"
   },
   "scripts": {
-    "sereno": "gulp --gulpfile .sereno/gulpfile.js watch",
-    "sereno:build": "gulp --gulpfile .sereno/gulpfile.js",
-    "sereno:deploy": "sereno deploy"
+    "sereno:dev": "gulp --gulpfile .github/sereno/gulpfile.js watch",
+    "sereno:build": "gulp --gulpfile .github/sereno/gulpfile.js",
+    "sereno:deploy": "npm run sereno:build && sereno deploy"
   }
 }

@@ -150,7 +150,7 @@ class DeployCommand extends Command
         app(Filesystem::class)->deleteDirectory(cache_dir());
 
         $output->writeln('Building website...');
-        $gulp = new Process('npm run sereno:predeploy -- --env=default');
+        $gulp = new Process('npm run sereno:predeploy -- --env default');
         debug('=> Build Script: npm run sereno:predeploy');
 
         $gulp->run();

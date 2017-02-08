@@ -28,20 +28,20 @@ class InitCommand extends Command
             exit(-1);
         }
 
-        $serenoDir = root_dir('.sereno');
+        $serenoDir = root_dir('.github/sereno');
         if (! $filesystem->exists($serenoDir)) {
-            $filesystem->makeDirectory($serenoDir);
+            $filesystem->makeDirectory($serenoDir, 0755, true);
         }
 
-        $filesystem->copyDirectory(__DIR__.'/../../resources/assets', root_dir('.sereno/resources/assets'));
-        $filesystem->copy(__DIR__.'/../../resources/gulpfile.js', root_dir('.sereno/gulpfile.js'));
+        $filesystem->copyDirectory(__DIR__.'/../../resources/assets', root_dir('.github/sereno/resources/assets'));
+        $filesystem->copy(__DIR__.'/../../resources/gulpfile.js', root_dir('.github/sereno/gulpfile.js'));
 
         $packageFile = root_dir('package.json');
         if (! $force and $filesystem->exists($packageFile)) {
             $output->writeln('<info>Add script to package.json:</info>'.PHP_EOL.
-                             '   "sereno": "gulp --gulpfile .sereno/gulpfile.js watch",'.PHP_EOL.
-                             '   "sereno:build": "gulp --gulpfile .sereno/gulpfile.js --env default",,'.PHP_EOL.
-                             '   "sereno:deploy": "sereno deploy"');
+                             '   "sereno:dev": "gulp --gulpfile .github/sereno/gulpfile.js watch",'.PHP_EOL.
+                             '   "sereno:build": "gulp --gulpfile .github/sereno/gulpfile.js",,'.PHP_EOL.
+                             '   "sereno:deploy": "npm run sereno:build && sereno deploy"');
             $output->writeln('<info>Run command:</info>'.PHP_EOL.
                              '   yarn add --dev gulp laravel-elixir yargs bootstrap highlightjs jquery tether');
         } else {
@@ -60,13 +60,13 @@ siteDescription: [Project Description]
 
 sereno:
     url: /
-    public: .sereno/public
+    public: .github/sereno/public
     extensions:
       - Sereno\Extensions\DocsExtension
     directory:
-      - .sereno/content
+      - .github/sereno/content
     views:
-      - .sereno/resources/views/
+      - .github/sereno/resources/views/
     ignore:
       - docs/README.md
 
