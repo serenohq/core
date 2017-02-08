@@ -182,9 +182,9 @@
         |
         */
         'translation' => [
-            'dir' => root_dir('resources/lang'),
-            'locale' => 'en',
-            'fallback_locale' => 'en'
-        ]
+            'dir'             => root_dir('resources/lang'),
+            'locale'          => 'en',
+            'fallback_locale' => 'en',
+        ],
     ],
 ];
