@@ -83,7 +83,7 @@ if (! function_exists('trans')) {
      * @param  string  $id
      * @param  array   $replace
      * @param  string  $locale
-     * @return \Illuminate\Contracts\Translation\Translator|string
+     * @return \Illuminate\Translation\Translator|string
      */
     function trans($id = null, $replace = [], $locale = null)
     {

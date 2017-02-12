@@ -23,8 +23,52 @@ class BuildCommand extends Command
         if ($input->getOption('force')) {
             app(Filesystem::class)->cleanDirectory(cache_dir());
         }
-        app(SiteGenerator::class)->build();
+
+        $locales = config('_translations');
+
+        if (is_array($locales)) {
+            $this->generateMultiLingualSite($locales);
+        } else {
+            app(SiteGenerator::class)->build();
+        }
+
 
         $output->writeln('<info>Site was generated successfully.</info>');
+    }
+
+    /**
+     * @param $locales
+     */
+    protected function generateMultiLingualSite(array $locales)
+    {
+        $default = config('sereno.url');
+        $public = config('sereno.public');
+        foreach ($locales as $config) {
+            app('translator')->setLocale($config['locale']);
+            config()->set('sereno.url', $this->getUrl($default, $config['url']));
+            config()->set('sereno.public', $this->getDir($public, $config['dir'] ?? null, $config['url']));
+
+            app(SiteGenerator::class)->build();
+        }
+        config()->set('sereno.url', $default);
+        config()->set('sereno.public', $public);
+    }
+
+    protected function getUrl(string $default, string $url)
+    {
+        if (starts_with($url, ['http://', 'https://'])) {
+            return $url;
+        }
+
+        return str_replace('//', '/', $default.'/'.$url);
+    }
+
+    protected function getDir(string $public, string $dir = null, string $url)
+    {
+        if (is_null($dir)) {
+            $dir = $url;
+        }
+
+        return trim($public, '\/').DIRECTORY_SEPARATOR.trim($dir, '\/');
     }
 }

@@ -24,7 +24,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class Application extends Container
 {
-    const VERSION = '0.3 - DEV';
+    const VERSION = '0.3.2';
 
     use Traits\RegisterExtensionsTrait;
 
@@ -267,14 +267,14 @@ class Application extends Container
         $this->singleton('translation.loader', function () {
             $this->verbose('     - Create translation loader');
 
-            return new FileLoader($this->make(Filesystem::class), config('sereno.translation.dir'));
+            return new FileLoader($this->make(Filesystem::class), root_dir(config('_translator.dir')));
         });
         $this->singleton('translator', function ($app) {
             $this->verbose('     - Create translator');
 
             $loader = $app['translation.loader'];
-            $locale = config('sereno.translation.locale');
-            $fallback = config('sereno.translation.fallback_locale');
+            $locale = config('_translator.locale');
+            $fallback = config('_translator.fallback_locale');
 
             $trans = new Translator($loader, $locale);
 
