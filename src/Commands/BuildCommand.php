@@ -32,7 +32,6 @@ class BuildCommand extends Command
             app(SiteGenerator::class)->build();
         }
 
-
         $output->writeln('<info>Site was generated successfully.</info>');
     }
 
