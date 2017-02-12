@@ -46,9 +46,10 @@ class Blade
             return $path;
         }
 
-        $root = config('sereno.url', ''); // TODO: Handle multilingual sites.
+        $root = config('sereno.url', '');
 
-        return trim($root, '/').'/'.trim($path, '/');
+
+        return rtrim($root, '/').'/'.ltrim($path, '/');
     }
 
     protected function registerUrlDirective()

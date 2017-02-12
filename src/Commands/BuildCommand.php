@@ -60,7 +60,7 @@ class BuildCommand extends Command
             return $url;
         }
 
-        return str_replace('//', '/', $default.'/'.$url);
+        return rtrim($default, '/').'/'.ltrim($url, '/');
     }
 
     protected function getDir(string $public, string $dir = null, string $url)
