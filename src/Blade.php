@@ -48,7 +48,6 @@ class Blade
 
         $root = config('sereno.url', '');
 
-
         return rtrim($root, '/').'/'.ltrim($path, '/');
     }
 

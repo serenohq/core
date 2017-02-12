@@ -170,7 +170,7 @@
         */
         'markdown' => [
             'extends' => 'markdown',
-            'yields' => 'markdown-body',
+            'yields'  => 'markdown-body',
         ],
     ],
 
@@ -183,8 +183,8 @@
     |
     */
     '_translator' => [
-        'dir' => 'resources/lang',
-        'locale' => 'en',
+        'dir'             => 'resources/lang',
+        'locale'          => 'en',
         'fallback_locale' => 'en',
     ],
 ];
